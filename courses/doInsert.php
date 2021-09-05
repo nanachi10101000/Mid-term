@@ -24,17 +24,7 @@ if($_FILES["file"]["error"] === 0) {
     //echo ($file_name);
     
     // 將檔案從暫存中移出來，並且移到/course_detail
-    if(move_uploaded_file($_FILES["file"]["tmp_name"], "../course_detail/" . $file_name)) {
-      // var_dump($firm_id);
-      // var_dump($category_id);
-      // var_dump($area_id);
-      // var_dump($course_name);
-      // var_dump($price);
-      // var_dump($caution);
-      // var_dump($file_name);
-      // var_dump($now);
-      // exit;
-
+    if(move_uploaded_file($_FILES["file"]["tmp_name"], "../course_detail_flies/" . $file_name)) {
 
       try {
         // 將data 存入 course_information
