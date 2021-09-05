@@ -9,7 +9,7 @@ $password = "00000000";
 $dbname = "image";
 
 try {
-    $db_host = new PDO(
+    $image_db_host = new PDO(
       "mysql:host = {$servername}; dbname = {$dbname}; charset = utf8",
       $username, $password
     );

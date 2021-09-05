@@ -9,7 +9,7 @@ $password = "00000000";
 $dbname = "forum";
 
 try {
-    $db_host = new PDO(
+    $forum_db_host = new PDO(
       "mysql:host = {$servername}; dbname = {$dbname}; charset = utf8",
       $username, $password
     );
