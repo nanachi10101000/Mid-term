@@ -1,6 +1,5 @@
 <?php
-//開啟session
-session_start();
+
 
 // PDO connect 是連接MySQL時更安全且業界在用的方法
 $servername = "localhost";
