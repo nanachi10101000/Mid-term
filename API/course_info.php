@@ -2,6 +2,11 @@
 require_once ("../DB-Connect/PDO-Connect_courses.php");
 require_once("../DB-Connect/PDO-Connect_firm.php");
 
+if(!isset($_POST["id"])) {
+    header("location: /Mid-term/courses/course_list.php");
+    exit();
+}
+
 $id = $_POST["id"];
 
 // 拿到所有課程資料
@@ -11,7 +16,8 @@ $id = $_POST["id"];
               WHERE courses.course_information.firm_id = firm.firm_information.id
               AND courses.course_information.category_id = courses.category.id
               AND courses.course_information.area_id = courses.area.id
-              AND course_information.id = ?";
+              AND course_information.id = ?
+              AND courses.course_information.valid = 1";
   $stmt_course = $firm_db_host -> prepare($sql_course);
   $stmt_course -> execute([$id]);
   $rows_course = $stmt_course -> fetchAll(PDO::FETCH_ASSOC);
@@ -31,6 +37,5 @@ if($stmt_course -> rowCount() === 0) {
     ];
 }
 echo json_encode($data);
-
 $courses_db_host = null;
 $firm_db_host = null;

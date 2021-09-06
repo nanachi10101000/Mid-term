@@ -36,10 +36,12 @@
       <?php require_once("../js.php")?>
   </head>
   <body>
-    <div class="container vh-100 ">
+    <div class="container vh-100" style="width: 600px">
       <div class="form-group course-insert-form">
           <h1 class="text-center">新增課程</h1>
-          <form action="doInsert.php" method="post" enctype="multipart/form-data">
+          <?php require_once("../partials/message.php") ?>
+          
+          <form action="doCourseInsert.php" method="post" enctype="multipart/form-data">
               <div class="mb-2">
                   <label for="">體驗商：</label>
                   <select name="firm_id" id="" class="form-control" required>
@@ -86,11 +88,7 @@
                   <label for="">使用者條款：</label>
                   <textarea class="form-control" name="caution"cols="30" rows="5">請輸入您希望使用者遵守之條款：</textarea>
               </div>
-              <div class="mb-2">
-                  <?php if(isset($_SESSION["loginError"])): ?>
-                      <p class="text-danger">帳號或密碼錯誤, 次數: <?= $_SESSION["loginError"] ?></p>
-                  <?php endif; ?>
-              </div>
+
               <div class="d-grid">
                   <button class="btn btn-primary" type="submit">資料送出</button>
               </div>
