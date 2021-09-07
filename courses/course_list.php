@@ -193,11 +193,15 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
             <button class="btn btn-primary" id="reload">Reload Data</button>
             <a class="btn btn-primary" href="course_insert.php">新增課程</a>
         </div>
+        <button class="btn btn-danger" id="delete_selected">刪除已選</button>
         <div class="mb-2">
             <table class="table table-bordered">
                 <thead>
                 <tr>
-                    <th class="text-center" style="width: 70px;" >全選 <input type="checkbox" id="select-all"> </th>
+                    <th class="text-center " style="width: 70px;" >
+                        全選 <input type="checkbox" id="select-all"> 
+                        反選 <input type="checkbox" id="select-all-r"> 
+                    </th>
                     <th>課程名稱</th>
                     <th>體驗商名稱</th>
                     <th>建立時間</th>
@@ -226,6 +230,62 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
         keyboard: false
     })
 
+    // 全選
+    $("#select-all").click( function () {
+        //console.log($(this));
+        //console.log($(this).prop("checked"))
+        if($(this).prop("checked")) {
+            //console.log("check");
+            $("#target").find(".select").prop("checked", true);
+        } else {
+            //console.log("no check")
+            $("#target").find(".select").prop("checked", false);
+        }
+    })
+    // 反選
+    $("#select-all-r").click( function () {
+        $(".select").each(function() {
+            //console.log($(this));
+            if($(this).prop("checked")) {
+                $(this).prop("checked", false)
+            } else {
+                $(this).prop("checked", true)
+            }
+        })
+    })
+
+    // 刪除全部已選的東東
+    $("#delete_selected").click(function () {
+        let selectedId = [];
+        $(".select").each(function() {
+            //console.log($(this));
+            if($(this).prop("checked")) {
+                let course_id = $(this).data("courseid");
+                selectedId.push(course_id);
+            };
+        })
+        let formData = new FormData();
+        selectedId.forEach((id) => {
+            formData.append("course_id_arr[]", id);
+        });
+        axios.post("../API/doCourseDelete.php", formData)
+            .then(function (response) {
+                let data = response.data;
+                if (data.status === 1) {
+                    //alert(data.message);
+                    loadData()
+                } else {
+                    console.log(data.message);
+                    alert("沒有刪除成功欸ㄏㄏ！")
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    })
+
+
+
     // 先lode一次data
     loadData();
     function loadData() {
@@ -242,7 +302,9 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                             data.data_course.forEach((course) => {
                                 reloadCodes += `
                                     <tr>
-                                        <td class="text-center" ><input type="checkbox" id="select"></td>
+                                        <td class="text-center" >
+                                            <input type="checkbox" class="select" data-courseid="${course.id}">
+                                        </td>
                                         <td> ${course.course_name} </td>
                                         <td> ${course.firm_name} </td>
                                         <td> ${course.created_time} </td>
@@ -258,7 +320,9 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                             })
                             $("#target").append(reloadCodes);
                     } else {
-                        alert(data.message);
+                        //alert(data.message);
+                        $("#target").empty();
+                        console.log(data.message);
                     }
                 })
                 .catch(function (error) {

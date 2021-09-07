@@ -118,11 +118,15 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
             <button class="btn btn-primary" id="reload">Reload Data</button>
             <button class="btn btn-primary" id="inssertArea">新增地區</button>
         </div>
+        <button class="btn btn-danger" id="delete_selected">刪除已選</button>
         <div class="mb-2">
             <table class="table table-bordered">
                 <thead>
                 <tr>
-                    <th class="text-center" style="width: 70px;" >全選 <input type="checkbox" id="select-all"> </th>
+                    <th class="text-center" style="width: 70px;" >
+                        全選 <input type="checkbox" id="select-all"> 
+                        反選 <input type="checkbox" id="select-all-r"> 
+                    </th>
                     <th>地區名稱</th>
                     <th>地區詳細資訊</th>
                     <th></th>
@@ -149,6 +153,60 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
         keyboard: false
     })
 
+    // 全選
+    $("#select-all").click( function () {
+        //console.log($(this));
+        //console.log($(this).prop("checked"))
+        if($(this).prop("checked")) {
+            //console.log("check");
+            $("#target").find(".select").prop("checked", true);
+        } else {
+            //console.log("no check")
+            $("#target").find(".select").prop("checked", false);
+        }
+    })
+    // 反選
+    $("#select-all-r").click( function () {
+        $(".select").each(function() {
+            //console.log($(this));
+            if($(this).prop("checked")) {
+                $(this).prop("checked", false)
+            } else {
+                $(this).prop("checked", true)
+            }
+        })
+    })
+
+    // 刪除全部已選的東東
+    $("#delete_selected").click(function () {
+        let selectedId = [];
+        $(".select").each(function() {
+            //console.log($(this));
+            if($(this).prop("checked")) {
+                let area_id = $(this).data("areaid");
+                selectedId.push(area_id);
+            };
+        })
+        let formData = new FormData();
+        selectedId.forEach((id) => {
+            formData.append("area_id_arr[]", id);
+        });
+        axios.post("../API/doAreaDelete.php", formData)
+            .then(function (response) {
+                let data = response.data;
+                if (data.status === 1) {
+                    //alert(data.message);
+                    loadData()
+                } else {
+                    console.log(data.message);
+                    alert("沒有刪除成功欸ㄏㄏ！")
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    })
+
 
     // 先將資料跑出來一次
     loadData()
@@ -166,7 +224,9 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
                   data.data_area.forEach((area) => {
                       reloadCodes += `
                           <tr>
-                              <td class="text-center" ><input type="checkbox" id="select"></td>
+                            <td class="text-center" >
+                                <input type="checkbox" data-areaid="${area.id}" class="select">
+                            </td>
                               <td> ${area.area_name} </td>
                               <td> ${area.area_detail} </td>
                               <td class="text-end" style="width: 150px;">
@@ -178,7 +238,9 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
                   })
                   $("#target").append(reloadCodes);
             } else {
-                alert(data.message);
+                //alert(data.message);
+                $("#target").empty();
+                console.log(data.message);
             }
           })
           .catch(function (error) {
