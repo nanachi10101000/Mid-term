@@ -1,7 +1,6 @@
 <?php
 require_once("../DB-Connect/PDO-Connect_courses.php");
 
-
 // 拿到所有地區資料
 $sql_area = "SELECT courses.area.* FROM courses.area
               WHERE courses.area.valid = 1";
@@ -19,7 +18,7 @@ if($stmt_area -> rowCount() === 0) {
 } else {
     $data = [
         "status" => 1,
-        "data_course" => $rows_area
+        "data_area" => $rows_area
     ];
 }
 echo json_encode($data);

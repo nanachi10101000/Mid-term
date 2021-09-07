@@ -2,7 +2,7 @@
 require_once("../DB-Connect/PDO-Connect_courses.php");
 
 if(!isset($_POST["course_name"])) {
-  echo "請完整輸入編輯表單！";
+  header("location: course_list.php");
   exit;
 }
 
@@ -50,8 +50,10 @@ if($_FILES["file"]["error"] === 0) {
       $_SESSION["success_msg"] = "Update Seccuessfully!";
       header("location: course_list.php");
     } catch (error $e) {
-      echo ("insert failed");
-      var_dump($e);
+      // echo ("insert failed");
+      // var_dump($e);
+      $_SESSION["error_msg"] = "Upload failed";
+      header("location: course_list.php");
     }
   } else {
     $_SESSION["error_msg"] = "Upload failed";
@@ -69,11 +71,11 @@ if($_FILES["file"]["error"] === 0) {
     $stmt_course_info -> execute([$category_id, $area_id, $course_name, $price, $caution, $course_id]);
     //var_dump($rows_course_info);
     //echo("seccuessfully! with no file");
-    $_SESSION["success_msg"] = "Update Seccuessfully!";
+    $_SESSION["success_msg"] = "課程資料更新成功囉！";
     header("location: course_list.php");
   } catch (error $e) {
     // echo ("update failed");
-    $_SESSION["error_msg"] = "Upload failed";
+    $_SESSION["error_msg"] = "課程資料更新失敗！";
     header("location: course_list.php");
     var_dump($e);
   }

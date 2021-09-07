@@ -6,7 +6,7 @@
 
 
 <style>
-      .courseInfoTable > tbody > tr > td {
-            min-width: 100px;
+      .infoTable > tbody > tr > td:nth-child(1) {
+            width: 120px;
       }
 </style>

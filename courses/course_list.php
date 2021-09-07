@@ -36,7 +36,7 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <table class="table courseInfoTable">
+                    <table class="table courseInfoTable infoTable">
                         <tr>
                             <td>課程名稱: </td>
                             <td><span id="course-name"></span></td>
@@ -69,7 +69,7 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </div>
     </div>
-    <div class="modal fade" id="categoryInfo" tabindex="-1" aria-labelledby="categoryInfo" aria-hidden="true">
+    <div class="modal fade" id="batchInfo" tabindex="-1" aria-labelledby="batchInfo" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -77,14 +77,29 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <table class="table table-sm categoryTable">
+                    <table class="table table-sm batchTable">
+                        <thead>
                         <tr>
-                            <td>課程梯次</h4></td>
-                            <td><span id="course-name"></span></td>
-                        </tr>
+                            <th><h6>當前課程梯次</h6></th>
+                        </tr> 
+                        </thead>
+                        <tbody id="batchTarget">
+                            <tr>
+                                <td class="text-center">
+                                    <span id="batch-date">2021/08/30</span>
+                                    <button type="button" class="btn-close"></button>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
+                    <form class="form-inline">
+                        <div class="form-group mb-2">
+                            <input type="date" class="form-controlt" id="batch_date" value="">
+                        </div>
+                        <button type="button" class="btn btn-primary mb-2" id="insertBatch">新增梯次</button>
+                    </form>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer">          
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
                 </div>
             </div>
@@ -98,55 +113,53 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <table class="table table-sm courseEditTable">
-                        <h1 class="text-center">課程編輯</h1>
-                        <form action="doCourseEdit.php" method="post" id="courseEditForm" enctype="multipart/form-data">
-                            <input type="text" name="course_id" id="course_id" value="" hidden>
-                            <div class="mb-2">
-                                <label for="">體驗商：</label>
-                                <input type="text" class="form-control" id="firm" value="" disabled>
-                            </div>
-                            <div class="mb-2">
-                                <label for="">課程分類：</label>
-                                <select name="category_id" id="category_id" class="form-control" required>
-                                <?php foreach ($rows_category as $category): ?>
-                                <option value="<?=$category["id"]?>">
-                                    <?=$category["category_name"]?>
-                                </option>
-                                <?php endforeach;?>
-                                </select>
-                            </div>
-                            <div class="mb-2">
-                                <label for="">選擇地區：</label>
-                                <select name="area_id" id="area_id" class="form-control" required>
-                                <?php foreach ($rows_area as $area): ?>
-                                <option value="<?=$area["id"]?>">
-                                    <?=$area["area_name"]?>
-                                </option>
-                                <?php endforeach;?>
-                                </select>
-                            </div>
-                            <div class="mb-2">
-                                <label for="">課程名稱：</label>
-                                <input type="text" class="form-control" name="course_name" id="course_name" value="" required>
-                            </div>
-                            <div class="mb-2">
-                                <label for="">課程定價：</label>
-                                <input type="number" class="form-control" name="price" id="price" value="" required>
-                            </div>
-                            <div class="mb-2">
-                                <label for="">課程詳細說明檔：</label>
-                                <input type="file" class="form-control" name="file" >
-                            </div>
-                            <div class="mb-2">
-                                <input type="text" class="form-control" name="prevFile" id="prevFile" value="" hidden>
-                            </div>
-                            <div class="mb-2">
-                                <label for="">使用者條款：</label>
-                                <textarea class="form-control" name="caution"cols="30" rows="5" id="caution"></textarea>
-                            </div>
-                        </form>
-                    </table>
+                    <h1 class="text-center">課程編輯</h1>
+                    <form action="doCourseEdit.php" method="post" id="courseEditForm" enctype="multipart/form-data">
+                        <input type="text" name="course_id" id="course_id" value="" hidden>
+                        <div class="mb-2">
+                            <label for="">體驗商：</label>
+                            <input type="text" class="form-control" id="firm" value="" disabled>
+                        </div>
+                        <div class="mb-2">
+                            <label for="">課程分類：</label>
+                            <select name="category_id" id="category_id" class="form-control" required>
+                            <?php foreach ($rows_category as $category): ?>
+                            <option value="<?=$category["id"]?>">
+                                <?=$category["category_name"]?>
+                            </option>
+                            <?php endforeach;?>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label for="">選擇地區：</label>
+                            <select name="area_id" id="area_id" class="form-control" required>
+                            <?php foreach ($rows_area as $area): ?>
+                            <option value="<?=$area["id"]?>">
+                                <?=$area["area_name"]?>
+                            </option>
+                            <?php endforeach;?>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label for="">課程名稱：</label>
+                            <input type="text" class="form-control" name="course_name" id="course_name" value="" required>
+                        </div>
+                        <div class="mb-2">
+                            <label for="">課程定價：</label>
+                            <input type="number" class="form-control" name="price" id="price" value="" required>
+                        </div>
+                        <div class="mb-2">
+                            <label for="">課程詳細說明檔：</label>
+                            <input type="file" class="form-control" name="file" >
+                        </div>
+                        <div class="mb-2">
+                            <input type="text" class="form-control" name="prevFile" id="prevFile" value="" hidden>
+                        </div>
+                        <div class="mb-2">
+                            <label for="">使用者條款：</label>
+                            <textarea class="form-control" name="caution"cols="30" rows="5" id="caution"></textarea>
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="doCourseEdit">送出</button>
@@ -176,8 +189,9 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
 
     <div class="container main-container">
         <?php require_once "../partials/message.php"?>
-        <div class="my-2">
+        <div class="my-2 d-flex justify-content-between">
             <button class="btn btn-primary" id="reload">Reload Data</button>
+            <a class="btn btn-primary" href="course_insert.php">新增課程</a>
         </div>
         <div class="mb-2">
             <table class="table table-bordered">
@@ -201,7 +215,7 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
     let courseInfo = new bootstrap.Modal(document.getElementById('courseInfo'), {
         keyboard: false
     })
-    let categoryInfo = new bootstrap.Modal(document.getElementById('categoryInfo'), {
+    let batchInfo = new bootstrap.Modal(document.getElementById('batchInfo'), {
         keyboard: false
     })
 
@@ -214,26 +228,67 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
 
     // 先lode一次data
     loadData();
+    function loadData() {
+        // location.reload();
+        let formData = new FormData();
+            axios.post("../API/doLoadCourse.php", formData)  // 丟入/API/user.php抓當前id的資料
+                .then(function (response) {
+                    let data = response.data;
+                    //console.log(data);
+
+                    if (data.status === 1) {
+                        $("#target").empty();
+                        let reloadCodes = "";
+                            data.data_course.forEach((course) => {
+                                reloadCodes += `
+                                    <tr>
+                                        <td class="text-center" ><input type="checkbox" id="select"></td>
+                                        <td> ${course.course_name} </td>
+                                        <td> ${course.firm_name} </td>
+                                        <td> ${course.created_time} </td>
+                                        <td class="text-center" style="width: 150px;">
+                                            <button  data-id="${course.id}" class="btn btn-primary text-white batch-btn">增減梯次</button>
+                                        </td>
+                                        <td class="text-end" style="width: 150px;">
+                                            <button data-id="${course.id}" class="btn btn-primary text-white info-btn"><i class="fas fa-clipboard-list"></i></button>
+                                            <button data-id="${course.id}" class="btn btn-warning text-white edit-btn"><i class="fas fa-edit"></i></button>
+                                            <button data-id="${course.id}" class="btn btn-danger text-white delete-btn"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>`
+                            })
+                            $("#target").append(reloadCodes);
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+    }
+
+    // reload btn click
+    $("#reload").click(function() {
+        loadData();
+    })
     
     // 將id設為全域變數
     let id = 0;
 
     // 行程資訊
-
     $("#target").on("click", ".info-btn", function(){
         let id = $(this).data("id");
         let formData = new FormData();
             formData.append("id", id);
-            axios.post("../API/course_info.php", formData)  // 丟入/API/user.php抓當前id的資料
+            axios.post("../API/getCourseInfo.php", formData)  // 丟入/API/user.php抓當前id的資料
                 .then(function (response) {
                 //console.log(response.data.data);
                     if(response.data.status === 1) {
-                        $("#course-name").text(response.data.data.course_name);
-                        $("#firm_name").text(response.data.data.firm_name);
-                        $("#course_category").text(response.data.data.category_name);
-                        $("#course_area").text(response.data.data.area_name);
-                        $("#course_price").text(response.data.data.price);
-                        $("#course_caution").text(response.data.data.caution);
+                        $("#course-name").text(response.data.data_course.course_name);
+                        $("#firm_name").text(response.data.data_course.firm_name);
+                        $("#course_category").text(response.data.data_course.category_name);
+                        $("#course_area").text(response.data.data_course.area_name);
+                        $("#course_price").text(response.data.data_course.price);
+                        $("#course_caution").text(response.data.data_course.caution);
                     } else {
                         alert(response.data.message)
                     }
@@ -244,10 +299,101 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
         courseInfo.show();
     })
 
-    // 梯次編輯（增減）
-    $("#target").on("click", ".category-btn", function(){
-        categoryInfo.show();
+
+    // loading 梯次
+    function loadBatch() {
+        let formData = new FormData();
+            formData.append("course_id", id);
+            axios.post("../API/doLoadBatch.php", formData)  // 丟入/API/user.php抓當前id的資料
+                .then(function (response) {
+                    let data = response.data;
+                    //console.log(data);
+                    if(data.status === 1) {
+                        let batchCode = "";
+                        data.data_batch.forEach((batch) => {
+                            batchCode += `
+                            <tr>
+                                <td class="text-center">
+                                    <span id="batch-date">${batch.batch_date}</span>
+                                    <button id="batchDeleteBtn" type="button" class="btn-close" data-courseid="${batch.course_id}" data-batchdate="${batch.batch_date} "></button>
+                                </td>
+                            </tr>
+                            `
+                        });
+                        $("#batchTarget").empty();
+                        $("#batchTarget").append(batchCode);
+                    } else {
+                        //alert(data.message)
+                        $("#batchTarget").empty();
+                        //$("#batchTarget").append(batchCode);
+                    }
+                })
+                .catch(function (error) {
+                    console.log("error happend!");
+                    console.log(error);
+                });
+    }
+
+    // 梯次編輯視窗
+    $("#target").on("click", ".batch-btn", function(){
+        id = $(this).data("id");
+        batchInfo.show();
+        loadBatch()
     })
+
+    // 梯次新增
+    $("#insertBatch").on("click", function(){
+        //console.log(id);
+        let batch_date = $("#batch_date").val();
+        //console.log(batch_date);
+        let formData = new FormData();
+            formData.append("id", id);
+            formData.append("batch_date", batch_date);
+            axios.post("../API/doBatchInsert.php", formData)  // 丟入/API/user.php抓當前id的資料
+                .then(function (response) {
+                    let data = response.data;
+                    //console.log(response);
+
+                    if(data.status === 1) {
+                        //alert(data.message);
+                        loadBatch()
+                    } else {
+                        console.log(data.message);
+                        alert("此梯次日期已經存在！")
+                    }
+                })
+                .catch(function (error) {
+                    //console.log("error happend!");
+                    //console.log(error);
+                });
+    })
+    // 送出梯次刪除
+    $("#batchTarget").on("click", "#batchDeleteBtn", function() {
+        let course_id = $(this).data("courseid");
+        let batch_date = $(this).data("batchdate").trim();
+        //console.log(course_id, batch_date);
+        //console.log($(this));
+        let formData = new FormData();
+            formData.append("course_id", course_id );
+            formData.append("batch_date", batch_date);
+            axios.post("../API/doBatchDelete.php", formData)  // 丟入/API/user.php抓當前id的資料
+                .then(function (response) {
+                    //console.log(response);
+                    let data = response.data;
+                    if (data.status === 1) {
+                        //alert(data.message);
+                        loadBatch()
+                    } else {
+                        console.log(data.message);
+                        alert("沒有刪除成功欸ㄏㄏ！")
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+    })
+
+
 
     // 行程資訊編輯
     $("#target").on("click", ".edit-btn", function(){
@@ -260,9 +406,10 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
             axios.post("../API/getCourseInfo.php", formData)  // 丟入/API/user.php抓當前id的資料
                 .then(function (response) {
                 let data = response.data;
-                //console.log(data);
+                // console.log(data);
+                // return;
                     if(data.status === 1) {
-                    $("#course_id").val(id);
+                    $("#course_id").val(data.data_course.id);
                     $("#firm").val(data.data_course.firm_name);
                     $("#category_id").val(data.data_course.category_id);
                     $("#area_id").val(data.data_course.area_id);
@@ -280,6 +427,8 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                 });
         courseEdit.show();
     })
+
+
 
     // 送出行程資訊編輯的資料
     $("#doCourseEdit").click(function() {
@@ -322,47 +471,8 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                 });
     })
     
-    $("#reload").click(function() {
-        loadData();
-    })
 
-    function loadData() {
-        // location.reload();
-        let formData = new FormData();
-            axios.post("../API/doLoadCourse.php", formData)  // 丟入/API/user.php抓當前id的資料
-                .then(function (response) {
-                    let data = response.data;
-                    //console.log(data);
-
-                    if (data.status === 1) {
-                        $("#target").empty();
-                        let reloadCodes = "";
-                            data.data_course.forEach((course) => {
-                                reloadCodes += `
-                                    <tr>
-                                        <td class="text-center" ><input type="checkbox" id="select"></td>
-                                        <td> ${course.course_name} </td>
-                                        <td> ${course.firm_name} </td>
-                                        <td> ${course.created_time} </td>
-                                        <td class="text-center" style="width: 150px;">
-                                            <button  data-id="${course.id}" class="btn btn-primary text-white category-btn">增減梯次</button>
-                                        </td>
-                                        <td class="text-end" style="width: 150px;">
-                                            <button data-id="${course.id}" class="btn btn-primary text-white info-btn"><i class="fas fa-clipboard-list"></i></button>
-                                            <button data-id="${course.id}" class="btn btn-warning text-white edit-btn"><i class="fas fa-edit"></i></button>
-                                            <button data-id="${course.id}" class="btn btn-danger text-white delete-btn"><i class="fas fa-trash"></i></button>
-                                        </td>
-                                    </tr>`
-                            })
-                            $("#target").append(reloadCodes);
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-    }
+    
 </script>
 </body>
 </html>
