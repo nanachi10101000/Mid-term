@@ -32,6 +32,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta name="robots" content="index,follorw" />
       <meta name="rating" content="General">
+      <title>course_insert</title>
       <?php require_once("../css.php")?>
       <?php require_once("../js.php")?>
   </head>
@@ -84,6 +85,10 @@
               <div class="mb-2">
                   <label for="">課程定價：</label>
                   <input type="number" class="form-control" name="price" required>
+              </div>
+              <div class="mb-2">
+                  <label for="">課程ㄉ圖片：</label>
+                  <input type="file" class="form-control" name="image_file" required>
               </div>
               <div class="mb-2">
                   <label for="">課程詳細說明檔：</label>

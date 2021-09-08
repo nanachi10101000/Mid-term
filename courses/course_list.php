@@ -149,6 +149,13 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                             <input type="number" class="form-control" name="price" id="price" value="" required>
                         </div>
                         <div class="mb-2">
+                            <label for="">課程ㄉ圖片：</label>
+                            <input type="file" class="form-control" name="image_file" required>
+                        </div>
+                        <div class="mb-2">
+                            <input type="text" class="form-control" name="prevImageFile" id="prevImageFile" value="" hidden>
+                        </div>
+                        <div class="mb-2">
                             <label for="">課程詳細說明檔：</label>
                             <input type="file" class="form-control" name="file" >
                         </div>
@@ -490,8 +497,8 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                 axios.post("../API/getCourseInfo.php", formData)  // 丟入/API/user.php抓當前id的資料
                     .then(function (response) {
                     let data = response.data;
-                    // console.log(data);
-                    // return;
+                        console.log(data);
+                        //return;
                         if(data.status === 1) {
                         $("#course_id").val(data.data_course.id);
                         $("#firm").val(data.data_course.firm_name);
@@ -500,6 +507,7 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                         $("#course_name").val(data.data_course.course_name);
                         $("#price").val(data.data_course.price);
                         $("#prevFile").val(data.data_course.course_detail);
+                        $("#prevImageFile").val(data.data_course_image.image_name);
                         $("#caution").val(data.data_course.caution);
 
                         } else {
