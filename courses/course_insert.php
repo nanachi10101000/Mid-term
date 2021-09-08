@@ -36,9 +36,14 @@
       <?php require_once("../js.php")?>
   </head>
   <body>
-    <div class="container vh-100" style="width: 600px">
+
+    <?php require_once("../partials/nav-bar/sidebar.php") ?>
+    <!-- <div class=" page_box container vh-100" style="width: 600px"> -->
+    <div class="page_box">
+      <div class="title display-6 text-start fw-bold">
+            課程新增
+      </div>
       <div class="form-group course-insert-form">
-          <h1 class="text-center">新增課程</h1>
           <?php require_once("../partials/message.php") ?>
           
           <form action="doCourseInsert.php" method="post" enctype="multipart/form-data">

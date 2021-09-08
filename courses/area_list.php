@@ -72,7 +72,7 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <h1 class="text-center">地區編輯</h1>
+                    <!-- <h1 class="text-center">地區編輯</h1> -->
                     <form action="doAreaEdit.php" method="post" id="areaEditForm" enctype="multipart/form-data">
                         <input type="text" name="area_id" id="area_id" value="" hidden>
                         <div class="mb-2">
@@ -112,27 +112,36 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
     </div>
 
 
-    <div class="container main-container">
+    <?php require_once("../partials/nav-bar/sidebar.php") ?>
+
+    <div class="page_box">
         <?php require_once "../partials/message.php"?>
-        <div class="my-2 d-flex justify-content-between">
+
+        <div class="title display-6 text-start fw-bold">
+            地區管理
+        </div>
+
+        <div class="sorting d-flex justify-content-between">
             <button class="btn btn-primary" id="reload">Reload Data</button>
             <button class="btn btn-primary" id="inssertArea">新增地區</button>
         </div>
-        <button class="btn btn-danger" id="delete_selected">刪除已選</button>
-        <div class="mb-2">
-            <table class="table table-bordered">
-                <thead>
-                <tr>
+
+        <div id="table_wrap">
+            <table class="table">
+                <thead class="table_head fs-6 fw-bold">
+                <tr class="text-center" >
+                    <th>#</th>
                     <th class="text-center" style="width: 70px;" >
                         全選 <input type="checkbox" id="select-all"> 
                         反選 <input type="checkbox" id="select-all-r"> 
+                        <button class="btn btn-danger btn-sm" id="delete_selected">刪除</button>
                     </th>
                     <th>地區名稱</th>
                     <th>地區詳細資訊</th>
                     <th></th>
                 </tr>
                 </thead>
-                <tbody id="target">
+                <tbody id="target" class="fs-6">
                 </tbody>
             </table>
         </div>
@@ -221,9 +230,13 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
             if (data.status === 1) {
               $("#target").empty();
               let reloadCodes = "";
+              let count = 1;
                   data.data_area.forEach((area) => {
                       reloadCodes += `
                           <tr>
+                            <td class="text-center" >
+                                ${count}
+                            </td>                          
                             <td class="text-center" >
                                 <input type="checkbox" data-areaid="${area.id}" class="select">
                             </td>
@@ -235,6 +248,7 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
                                   <button data-id="${area.id}" class="btn btn-danger text-white delete-btn"><i class="fas fa-trash"></i></button>
                               </td>
                           </tr>`
+                          count ++;
                   })
                   $("#target").append(reloadCodes);
             } else {

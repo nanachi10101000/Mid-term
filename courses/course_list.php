@@ -113,7 +113,7 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <h1 class="text-center">課程編輯</h1>
+                    <!-- <h1 class="text-center">課程編輯</h1> -->
                     <form action="doCourseEdit.php" method="post" id="courseEditForm" enctype="multipart/form-data">
                         <input type="text" name="course_id" id="course_id" value="" hidden>
                         <div class="mb-2">
@@ -187,20 +187,31 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
 
-    <div class="container main-container">
+    <?php require_once("../partials/nav-bar/sidebar.php") ?>
+
+    <div class="page_box">
         <?php require_once "../partials/message.php"?>
-        <div class="my-2 d-flex justify-content-between">
-            <button class="btn btn-primary" id="reload">Reload Data</button>
-            <a class="btn btn-primary" href="course_insert.php">新增課程</a>
+
+        <div class="title display-6 text-start fw-bold">
+            課程管理
         </div>
-        <button class="btn btn-danger" id="delete_selected">刪除已選</button>
-        <div class="mb-2">
-            <table class="table table-bordered">
-                <thead>
-                <tr>
-                    <th class="text-center " style="width: 70px;" >
+
+        <div class="sorting d-flex justify-content-between">
+                <button class="btn btn-primary" id="reload">Reload Data</button>
+                <a class="btn btn-primary" href="course_insert.php">新增課程</a>
+        </div>
+        
+
+
+        <div id="table_wrap">
+            <table class="table">
+                <thead class="table_head fs-6 fw-bold">
+                <tr class="fs-6 fw-bold">
+                    <th>#</th>
+                    <th class="text-center" style="width: 70px;" >
                         全選 <input type="checkbox" id="select-all"> 
-                        反選 <input type="checkbox" id="select-all-r"> 
+                        反選 <input type="checkbox" id="select-all-r">
+                        <button class="btn btn-danger btn-sm" id="delete_selected">刪除</button>
                     </th>
                     <th>課程名稱</th>
                     <th>體驗商名稱</th>
@@ -209,244 +220,72 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                     <th></th>
                 </tr>
                 </thead>
-                <tbody id="target">
+                <tbody id="target" class="fs-6">
                     
                 </tbody>
             </table>
         </div>
     </div>
-<script>
-    let courseInfo = new bootstrap.Modal(document.getElementById('courseInfo'), {
-        keyboard: false
-    })
-    let batchInfo = new bootstrap.Modal(document.getElementById('batchInfo'), {
-        keyboard: false
-    })
 
-    let courseEdit = new bootstrap.Modal(document.getElementById('courseEdit'), {
-        keyboard: false
-    })
-    let courseDelete = new bootstrap.Modal(document.getElementById('courseDelete'), {
-        keyboard: false
-    })
+    <script>
+        let courseInfo = new bootstrap.Modal(document.getElementById('courseInfo'), {
+            keyboard: false
+        })
+        let batchInfo = new bootstrap.Modal(document.getElementById('batchInfo'), {
+            keyboard: false
+        })
 
-    // 全選
-    $("#select-all").click( function () {
-        //console.log($(this));
-        //console.log($(this).prop("checked"))
-        if($(this).prop("checked")) {
-            //console.log("check");
-            $("#target").find(".select").prop("checked", true);
-        } else {
-            //console.log("no check")
-            $("#target").find(".select").prop("checked", false);
-        }
-    })
-    // 反選
-    $("#select-all-r").click( function () {
-        $(".select").each(function() {
+        let courseEdit = new bootstrap.Modal(document.getElementById('courseEdit'), {
+            keyboard: false
+        })
+        let courseDelete = new bootstrap.Modal(document.getElementById('courseDelete'), {
+            keyboard: false
+        })
+
+        // 全選
+        $("#select-all").click( function () {
             //console.log($(this));
+            //console.log($(this).prop("checked"))
             if($(this).prop("checked")) {
-                $(this).prop("checked", false)
+                //console.log("check");
+                $("#target").find(".select").prop("checked", true);
             } else {
-                $(this).prop("checked", true)
+                //console.log("no check")
+                $("#target").find(".select").prop("checked", false);
             }
         })
-    })
-
-    // 刪除全部已選的東東
-    $("#delete_selected").click(function () {
-        let selectedId = [];
-        $(".select").each(function() {
-            //console.log($(this));
-            if($(this).prop("checked")) {
-                let course_id = $(this).data("courseid");
-                selectedId.push(course_id);
-            };
-        })
-        let formData = new FormData();
-        selectedId.forEach((id) => {
-            formData.append("course_id_arr[]", id);
-        });
-        axios.post("../API/doCourseDelete.php", formData)
-            .then(function (response) {
-                let data = response.data;
-                if (data.status === 1) {
-                    //alert(data.message);
-                    loadData()
+        // 反選
+        $("#select-all-r").click( function () {
+            $(".select").each(function() {
+                //console.log($(this));
+                if($(this).prop("checked")) {
+                    $(this).prop("checked", false)
                 } else {
-                    console.log(data.message);
-                    alert("沒有刪除成功欸ㄏㄏ！")
+                    $(this).prop("checked", true)
                 }
             })
-            .catch(function (error) {
-                console.log(error);
+        })
+
+        // 刪除全部已選的東東
+        $("#delete_selected").click(function () {
+            let selectedId = [];
+            $(".select").each(function() {
+                //console.log($(this));
+                if($(this).prop("checked")) {
+                    let course_id = $(this).data("courseid");
+                    selectedId.push(course_id);
+                };
+            })
+            let formData = new FormData();
+            selectedId.forEach((id) => {
+                formData.append("course_id_arr[]", id);
             });
-    })
-
-
-
-    // 先lode一次data
-    loadData();
-    function loadData() {
-        // location.reload();
-        let formData = new FormData();
-            axios.post("../API/doLoadCourse.php", formData)  // 丟入/API/user.php抓當前id的資料
+            axios.post("../API/doCourseDelete.php", formData)
                 .then(function (response) {
-                    let data = response.data;
-                    //console.log(data);
-
-                    if (data.status === 1) {
-                        $("#target").empty();
-                        let reloadCodes = "";
-                            data.data_course.forEach((course) => {
-                                reloadCodes += `
-                                    <tr>
-                                        <td class="text-center" >
-                                            <input type="checkbox" class="select" data-courseid="${course.id}">
-                                        </td>
-                                        <td> ${course.course_name} </td>
-                                        <td> ${course.firm_name} </td>
-                                        <td> ${course.created_time} </td>
-                                        <td class="text-center" style="width: 150px;">
-                                            <button  data-id="${course.id}" class="btn btn-primary text-white batch-btn">增減梯次</button>
-                                        </td>
-                                        <td class="text-end" style="width: 150px;">
-                                            <button data-id="${course.id}" class="btn btn-primary text-white info-btn"><i class="fas fa-clipboard-list"></i></button>
-                                            <button data-id="${course.id}" class="btn btn-warning text-white edit-btn"><i class="fas fa-edit"></i></button>
-                                            <button data-id="${course.id}" class="btn btn-danger text-white delete-btn"><i class="fas fa-trash"></i></button>
-                                        </td>
-                                    </tr>`
-                            })
-                            $("#target").append(reloadCodes);
-                    } else {
-                        //alert(data.message);
-                        $("#target").empty();
-                        console.log(data.message);
-                    }
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-    }
-
-    // reload btn click
-    $("#reload").click(function() {
-        loadData();
-    })
-    
-    // 將id設為全域變數
-    let id = 0;
-
-    // 行程資訊
-    $("#target").on("click", ".info-btn", function(){
-        let id = $(this).data("id");
-        let formData = new FormData();
-            formData.append("id", id);
-            axios.post("../API/getCourseInfo.php", formData)  // 丟入/API/user.php抓當前id的資料
-                .then(function (response) {
-                //console.log(response.data.data);
-                    if(response.data.status === 1) {
-                        $("#course-name").text(response.data.data_course.course_name);
-                        $("#firm_name").text(response.data.data_course.firm_name);
-                        $("#course_category").text(response.data.data_course.category_name);
-                        $("#course_area").text(response.data.data_course.area_name);
-                        $("#course_price").text(response.data.data_course.price);
-                        $("#course_caution").text(response.data.data_course.caution);
-                    } else {
-                        alert(response.data.message)
-                    }
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-        courseInfo.show();
-    })
-
-
-    // loading 梯次
-    function loadBatch() {
-        let formData = new FormData();
-            formData.append("course_id", id);
-            axios.post("../API/doLoadBatch.php", formData)  // 丟入/API/user.php抓當前id的資料
-                .then(function (response) {
-                    let data = response.data;
-                    //console.log(data);
-                    if(data.status === 1) {
-                        let batchCode = "";
-                        data.data_batch.forEach((batch) => {
-                            batchCode += `
-                            <tr>
-                                <td class="text-center">
-                                    <span id="batch-date">${batch.batch_date}</span>
-                                    <button id="batchDeleteBtn" type="button" class="btn-close" data-courseid="${batch.course_id}" data-batchdate="${batch.batch_date} "></button>
-                                </td>
-                            </tr>
-                            `
-                        });
-                        $("#batchTarget").empty();
-                        $("#batchTarget").append(batchCode);
-                    } else {
-                        //alert(data.message)
-                        $("#batchTarget").empty();
-                        //$("#batchTarget").append(batchCode);
-                    }
-                })
-                .catch(function (error) {
-                    console.log("error happend!");
-                    console.log(error);
-                });
-    }
-
-    // 梯次編輯視窗
-    $("#target").on("click", ".batch-btn", function(){
-        id = $(this).data("id");
-        batchInfo.show();
-        loadBatch()
-    })
-
-    // 梯次新增
-    $("#insertBatch").on("click", function(){
-        //console.log(id);
-        let batch_date = $("#batch_date").val();
-        //console.log(batch_date);
-        let formData = new FormData();
-            formData.append("id", id);
-            formData.append("batch_date", batch_date);
-            axios.post("../API/doBatchInsert.php", formData)  // 丟入/API/user.php抓當前id的資料
-                .then(function (response) {
-                    let data = response.data;
-                    //console.log(response);
-
-                    if(data.status === 1) {
-                        //alert(data.message);
-                        loadBatch()
-                    } else {
-                        console.log(data.message);
-                        alert("此梯次日期已經存在！")
-                    }
-                })
-                .catch(function (error) {
-                    //console.log("error happend!");
-                    //console.log(error);
-                });
-    })
-    // 送出梯次刪除
-    $("#batchTarget").on("click", "#batchDeleteBtn", function() {
-        let course_id = $(this).data("courseid");
-        let batch_date = $(this).data("batchdate").trim();
-        //console.log(course_id, batch_date);
-        //console.log($(this));
-        let formData = new FormData();
-            formData.append("course_id", course_id );
-            formData.append("batch_date", batch_date);
-            axios.post("../API/doBatchDelete.php", formData)  // 丟入/API/user.php抓當前id的資料
-                .then(function (response) {
-                    //console.log(response);
                     let data = response.data;
                     if (data.status === 1) {
                         //alert(data.message);
-                        loadBatch()
+                        loadData()
                     } else {
                         console.log(data.message);
                         alert("沒有刪除成功欸ㄏㄏ！")
@@ -455,88 +294,270 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                 .catch(function (error) {
                     console.log(error);
                 });
-    })
+        })
 
 
 
-    // 行程資訊編輯
-    $("#target").on("click", ".edit-btn", function(){
-        let id = $(this).data("id");
-        // console.log(id);
-        // courseEdit.show();
-        // return;
-        let formData = new FormData();
-            formData.append("id", id);
-            axios.post("../API/getCourseInfo.php", formData)  // 丟入/API/user.php抓當前id的資料
-                .then(function (response) {
-                let data = response.data;
-                // console.log(data);
-                // return;
-                    if(data.status === 1) {
-                    $("#course_id").val(data.data_course.id);
-                    $("#firm").val(data.data_course.firm_name);
-                    $("#category_id").val(data.data_course.category_id);
-                    $("#area_id").val(data.data_course.area_id);
-                    $("#course_name").val(data.data_course.course_name);
-                    $("#price").val(data.data_course.price);
-                    $("#prevFile").val(data.data_course.course_detail);
-                    $("#caution").val(data.data_course.caution);
-
-                    } else {
-                    alert(data.message)
-                    }
-                })
-                .catch(function (error) {
-                console.log(error);
-                });
-        courseEdit.show();
-    })
 
 
+        // loading 課程
+        function loadData() {
+            // location.reload();
+            let formData = new FormData();
+                axios.post("../API/doLoadCourse.php", formData)  // 丟入/API/user.php抓當前id的資料
+                    .then(function (response) {
+                        let data = response.data;
+                        //console.log(data);
 
-    // 送出行程資訊編輯的資料
-    $("#doCourseEdit").click(function() {
-    $("#courseEditForm").submit();
+                        if (data.status === 1) {
+                            $("#target").empty();
+                            let reloadCodes = "";
+                            let count = 1;
+                                data.data_course.forEach((course) => {
+                                    reloadCodes += `
+                                        <tr>
+                                            <td class="text-center" >
+                                                ${count}
+                                            </td>
+                                            <td class="text-center" >
+                                                <input type="checkbox" class="select" data-courseid="${course.id}">
+                                            </td>
+                                            <td> ${course.course_name} </td>
+                                            <td> ${course.firm_name} </td>
+                                            <td> ${course.created_time} </td>
+                                            <td class="text-center" style="width: 150px;">
+                                                <button  data-id="${course.id}" class="btn btn-primary text-white batch-btn">增減梯次</button>
+                                            </td>
+                                            <td class="text-end" style="width: 150px;">
+                                                <button data-id="${course.id}" class="btn btn-primary text-white info-btn"><i class="fas fa-clipboard-list"></i></button>
+                                                <button data-id="${course.id}" class="btn btn-warning text-white edit-btn"><i class="fas fa-edit"></i></button>
+                                                <button data-id="${course.id}" class="btn btn-danger text-white delete-btn"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>`
+                                    count ++;
+                                })
+                                $("#target").append(reloadCodes);
+                        } else {
+                            //alert(data.message);
+                            $("#target").empty();
+                            console.log(data.message);
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+        }
+        // loading 梯次
+        function loadBatch() {
+            let formData = new FormData();
+                formData.append("course_id", id);
+                axios.post("../API/doLoadBatch.php", formData)  // 丟入/API/user.php抓當前id的資料
+                    .then(function (response) {
+                        let data = response.data;
+                        //console.log(data);
+                        if(data.status === 1) {
+                            let batchCode = "";
+                            data.data_batch.forEach((batch) => {
+                                batchCode += `
+                                <tr>
+                                    <td class="text-center">
+                                        <span id="batch-date">${batch.batch_date}</span>
+                                        <button id="batchDeleteBtn" type="button" class="btn-close" data-courseid="${batch.course_id}" data-batchdate="${batch.batch_date} "></button>
+                                    </td>
+                                </tr>
+                                `
+                            });
+                            $("#batchTarget").empty();
+                            $("#batchTarget").append(batchCode);
+                        } else {
+                            //alert(data.message)
+                            $("#batchTarget").empty();
+                            //$("#batchTarget").append(batchCode);
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log("error happend!");
+                        console.log(error);
+                    });
+        }
 
-        // let category_id = $("#category_id").val();
-        // let area_id = $("#area_id").val();
-        // let course_name = $("#course_name").val();
-        // let price = $("#price").val();
-        // let prevFile = $("#prevFile").val();
-        // let caution = $("#caution").val();
-        // console.log(category_id, area_id, course_name, price, prevFile, caution)
-    })
+        // 先lode一次data
+        loadData();
 
-    // 行程資訊刪除
-    $("#target").on("click", ".delete-btn", function(){
-        id = $(this).data("id");
-        courseDelete.show();
-    })
+        // reload btn click
+        $("#reload").click(function() {
+            loadData();
+        })
+        
+        // 將id設為全域變數
+        let id = 0;
 
-    // 送出行程資訊刪除
-    $("#courseDeleteBtn").click(function() {
-        //console.log(id);
-        let formData = new FormData();
-            formData.append("id", id);
-            axios.post("../API/doCourseDelete.php", formData)  // 丟入/API/user.php抓當前id的資料
-                .then(function (response) {
-                    //console.log(response);
+        // 行程資訊
+        $("#target").on("click", ".info-btn", function(){
+            let id = $(this).data("id");
+            let formData = new FormData();
+                formData.append("id", id);
+                axios.post("../API/getCourseInfo.php", formData)  // 丟入/API/user.php抓當前id的資料
+                    .then(function (response) {
+                    //console.log(response.data.data);
+                        if(response.data.status === 1) {
+                            $("#course-name").text(response.data.data_course.course_name);
+                            $("#firm_name").text(response.data.data_course.firm_name);
+                            $("#course_category").text(response.data.data_course.category_name);
+                            $("#course_area").text(response.data.data_course.area_name);
+                            $("#course_price").text(response.data.data_course.price);
+                            $("#course_caution").text(response.data.data_course.caution);
+                        } else {
+                            alert(response.data.message)
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            courseInfo.show();
+        })
+
+
+        // 梯次編輯視窗
+        $("#target").on("click", ".batch-btn", function(){
+            id = $(this).data("id");
+            batchInfo.show();
+            loadBatch()
+        })
+
+        // 梯次新增
+        $("#insertBatch").on("click", function(){
+            //console.log(id);
+            let batch_date = $("#batch_date").val();
+            //console.log(batch_date);
+            let formData = new FormData();
+                formData.append("id", id);
+                formData.append("batch_date", batch_date);
+                axios.post("../API/doBatchInsert.php", formData)  // 丟入/API/user.php抓當前id的資料
+                    .then(function (response) {
+                        let data = response.data;
+                        //console.log(response);
+
+                        if(data.status === 1) {
+                            //alert(data.message);
+                            loadBatch()
+                        } else {
+                            //console.log(data.message);
+                            alert("此梯次日期已經存在！")
+                        }
+                    })
+                    .catch(function (error) {
+                        //console.log("error happend!");
+                        //console.log(error);
+                    });
+        })
+        // 送出梯次刪除
+        $("#batchTarget").on("click", "#batchDeleteBtn", function() {
+            let course_id = $(this).data("courseid");
+            let batch_date = $(this).data("batchdate").trim();
+            //console.log(course_id, batch_date);
+            //console.log($(this));
+            let formData = new FormData();
+                formData.append("course_id", course_id );
+                formData.append("batch_date", batch_date);
+                axios.post("../API/doBatchDelete.php", formData)  // 丟入/API/user.php抓當前id的資料
+                    .then(function (response) {
+                        //console.log(response);
+                        let data = response.data;
+                        if (data.status === 1) {
+                            //alert(data.message);
+                            loadBatch()
+                        } else {
+                            console.log(data.message);
+                            alert("沒有刪除成功欸ㄏㄏ！")
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+        })
+
+
+
+        // 行程資訊編輯
+        $("#target").on("click", ".edit-btn", function(){
+            let id = $(this).data("id");
+            // console.log(id);
+            // courseEdit.show();
+            // return;
+            let formData = new FormData();
+                formData.append("id", id);
+                axios.post("../API/getCourseInfo.php", formData)  // 丟入/API/user.php抓當前id的資料
+                    .then(function (response) {
                     let data = response.data;
-                    if (data.status === 1) {
-                        alert(data.message);
-                        //location.reload();
-                        loadData();
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-    })
-    
+                    // console.log(data);
+                    // return;
+                        if(data.status === 1) {
+                        $("#course_id").val(data.data_course.id);
+                        $("#firm").val(data.data_course.firm_name);
+                        $("#category_id").val(data.data_course.category_id);
+                        $("#area_id").val(data.data_course.area_id);
+                        $("#course_name").val(data.data_course.course_name);
+                        $("#price").val(data.data_course.price);
+                        $("#prevFile").val(data.data_course.course_detail);
+                        $("#caution").val(data.data_course.caution);
 
-    
-</script>
+                        } else {
+                        alert(data.message)
+                        }
+                    })
+                    .catch(function (error) {
+                    console.log(error);
+                    });
+            console.log($(".modal-content").scrollTop());
+            courseEdit.show();
+        })
+
+
+
+        // 送出行程資訊編輯的資料
+        $("#doCourseEdit").click(function() {
+        $("#courseEditForm").submit();
+
+            // let category_id = $("#category_id").val();
+            // let area_id = $("#area_id").val();
+            // let course_name = $("#course_name").val();
+            // let price = $("#price").val();
+            // let prevFile = $("#prevFile").val();
+            // let caution = $("#caution").val();
+            // console.log(category_id, area_id, course_name, price, prevFile, caution)
+        })
+
+        // 行程資訊刪除
+        $("#target").on("click", ".delete-btn", function(){
+            id = $(this).data("id");
+            courseDelete.show();
+        })
+
+        // 送出行程資訊刪除
+        $("#courseDeleteBtn").click(function() {
+            //console.log(id);
+            let formData = new FormData();
+                formData.append("id", id);
+                axios.post("../API/doCourseDelete.php", formData)  // 丟入/API/user.php抓當前id的資料
+                    .then(function (response) {
+                        //console.log(response);
+                        let data = response.data;
+                        if (data.status === 1) {
+                            alert(data.message);
+                            //location.reload();
+                            loadData();
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+        })
+        
+
+        
+    </script>
 </body>
 </html>
