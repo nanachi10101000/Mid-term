@@ -110,6 +110,24 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
             </div>
         </div>
     </div>
+    <div class="modal fade" id="areaDeleteAll" tabindex="-1" aria-labelledby="areaDeleteAll" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">刪除全部已經選資料</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    確定刪除？ 你確定？？？？？？？
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="areaDeleteAllBtn">刪除</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
     <?php require_once("../partials/nav-bar/sidebar.php") ?>
@@ -122,7 +140,7 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
         </div>
 
         <div class="sorting d-flex justify-content-between">
-            <button class="btn btn-primary" id="reload">Reload Data</button>
+            <button class="btn btn-primary" id="reload">Reload</button>
             <button class="btn btn-primary" id="inssertArea">新增地區</button>
         </div>
 
@@ -161,6 +179,9 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
     let areaDelete = new bootstrap.Modal(document.getElementById('areaDelete'), {
         keyboard: false
     })
+    let areaDeleteAll = new bootstrap.Modal(document.getElementById('areaDeleteAll'), {
+        keyboard: false
+    })
 
     // 全選
     $("#select-all").click( function () {
@@ -185,9 +206,20 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
             }
         })
     })
-
+    
     // 刪除全部已選的東東
     $("#delete_selected").click(function () {
+        // 判斷是否至少有一個打勾
+        $(".select").each(function() {
+            if($(this).prop("checked")) {
+                areaDeleteAll.show()
+                return;
+            };
+        })
+        
+    })
+    // 送出刪除全部已選的東東
+    $("#areaDeleteAllBtn").click(function() {
         let selectedId = [];
         $(".select").each(function() {
             //console.log($(this));
@@ -215,7 +247,6 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
                 console.log(error);
             });
     })
-
 
     // 先將資料跑出來一次
     loadData()

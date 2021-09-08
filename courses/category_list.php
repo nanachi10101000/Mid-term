@@ -110,6 +110,23 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
             </div>
         </div>
     </div>
+    <div class="modal fade" id="categoryDeleteAll" tabindex="-1" aria-labelledby="categoryDeleteAll" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">刪除全部已經選資料</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    確定刪除？ 你確定？？？？？？？
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="categoryDeleteAllBtn">刪除</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <?php require_once("../partials/nav-bar/sidebar.php") ?>
@@ -122,7 +139,7 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
         </div>
 
         <div class="sorting d-flex justify-content-between">
-            <button class="btn btn-primary" id="reload">Reload Data</button>
+            <button class="btn btn-primary" id="reload">Reload</button>
             <button class="btn btn-primary" id="inssertCategory">新增類別</button>
         </div>
 
@@ -155,11 +172,13 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
     let categoryInfo = new bootstrap.Modal(document.getElementById('categoryInfo'), {
         keyboard: false
     })
-
     let categoryEdit = new bootstrap.Modal(document.getElementById('categoryEdit'), {
         keyboard: false
     })
     let categoryDelete = new bootstrap.Modal(document.getElementById('categoryDelete'), {
+        keyboard: false
+    })
+    let categoryDeleteAll = new bootstrap.Modal(document.getElementById('categoryDeleteAll'), {
         keyboard: false
     })
 
@@ -189,6 +208,18 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
 
     // 刪除全部已選的東東
     $("#delete_selected").click(function () {
+
+        // 判斷是否至少有一個打勾
+        $(".select").each(function() {
+            if($(this).prop("checked")) {
+                categoryDeleteAll.show()
+                return;
+            };
+        })
+        
+    })
+    // 送出刪除全部已選的東東
+    $("#categoryDeleteAllBtn").click(function() {
         let selectedId = [];
         $(".select").each(function() {
             //console.log($(this));
@@ -216,6 +247,7 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
             .catch(function (error) {
                 console.log(error);
             });
+
     })
 
 

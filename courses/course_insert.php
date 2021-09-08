@@ -4,7 +4,8 @@
   require_once("../DB-Connect/PDO-Connect_courses.php");
 
   // 拿到所有體驗商資料
-  $sql_firm = "SELECT * FROM firm.firm_information";
+  $sql_firm = "SELECT * FROM firm.firm_information
+                WHERE valid = 1 ORDER BY firm.firm_information.id DESC";
   $stmt_firm = $firm_db_host -> prepare($sql_firm);
   $stmt_firm -> execute();
   $rows_firm = $stmt_firm -> fetchAll(PDO::FETCH_ASSOC);
@@ -12,14 +13,16 @@
 
 
   // 拿到所有category資料
-  $sql_category = "SELECT * FROM courses.category";
+  $sql_category = "SELECT * FROM courses.category 
+                    WHERE valid = 1 ORDER BY courses.category.id DESC";
   $stmt_category = $courses_db_host -> prepare($sql_category);
   $stmt_category -> execute();
   $rows_category = $stmt_category -> fetchAll(PDO::FETCH_ASSOC);
   //var_dump($rows_category);
 
   // 拿到所有area資料
-  $sql_area = "SELECT * FROM courses.area";
+  $sql_area = "SELECT * FROM courses.area
+                WHERE valid = 1 ORDER BY courses.area.id DESC";
   $stmt_area = $courses_db_host -> prepare($sql_area);
   $stmt_area -> execute();
   $rows_area = $stmt_area -> fetchAll(PDO::FETCH_ASSOC);

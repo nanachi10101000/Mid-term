@@ -6,7 +6,8 @@ require_once("../DB-Connect/PDO-Connect_courses.php");
 $sql_course = "SELECT courses.course_information.*, firm.firm_information.firm_name
               FROM courses.course_information JOIN firm.firm_information
               ON courses.course_information.firm_id = firm.firm_information.id
-              WHERE courses.course_information.valid = 1";
+              WHERE courses.course_information.valid = 1
+              ORDER BY courses.course_information.id DESC";
 $stmt_course = $firm_db_host->prepare($sql_course);
 $stmt_course->execute();
 $rows_course = $stmt_course->fetchAll(PDO::FETCH_ASSOC);

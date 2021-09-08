@@ -49,3 +49,4 @@
   echo json_encode($data);
   $courses_db_host = null;
   $firm_db_host = null;
+  $image_db_host = null;

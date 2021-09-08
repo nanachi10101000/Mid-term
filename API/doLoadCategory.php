@@ -4,7 +4,8 @@ require_once("../DB-Connect/PDO-Connect_courses.php");
 
 // 拿到所有地區資料
 $sql_category = "SELECT courses.category.* FROM courses.category
-              WHERE courses.category.valid = 1";
+              WHERE courses.category.valid = 1
+              ORDER BY courses.category.id DESC";
 $stmt_category = $courses_db_host->prepare($sql_category);
 $stmt_category->execute();
 $rows_category = $stmt_category->fetchAll(PDO::FETCH_ASSOC);

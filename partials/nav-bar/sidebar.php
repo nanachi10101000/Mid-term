@@ -4,7 +4,7 @@ require_once ("sidebarCSS.php");
 ?>
 
 <nav>
-    <div class="sidebar flex-shrink-0 py-3 position-absolute">
+    <div class="sidebar flex-shrink-0 py-3 position-fixed">
         <a href="" class="d-flex align-items-center pb-3 my-3 mx-4 link-dark text-decoration-none border-bottom text-white">
 <!--            <svg class="bi me-2" width="30" height="24"><use xlink:href="#bootstrap"/></svg>-->
             <span class="h3 lh-sm fw-bolder">Wonderful<br>平台管理系統</span>

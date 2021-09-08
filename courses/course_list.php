@@ -192,6 +192,23 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </div>
     </div>
+    <div class="modal fade" id="courseDeleteAll" tabindex="-1" aria-labelledby="courseDeleteAll" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">刪除全部已經選資料</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    確定刪除？ 你確定？？？？？？？
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="courseDeleteAllBtn">刪除</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <?php require_once("../partials/nav-bar/sidebar.php") ?>
@@ -202,10 +219,21 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
         <div class="title display-6 text-start fw-bold">
             課程管理
         </div>
+        
 
         <div class="sorting d-flex justify-content-between">
-                <button class="btn btn-primary" id="reload">Reload Data</button>
-                <a class="btn btn-primary" href="course_insert.php">新增課程</a>
+            <div class="d-flex" style="max-height: 40px;">
+                <button class="btn btn-primary" id="reload">Reload</button>
+                <div class="input-group ">
+                    <select id="condition">
+                        <option value="1">依課程搜</option>
+                        <option value="2">依體驗商搜</option>
+                    </select>
+                    <input type="text" class="form-control" id="search">
+                    <button class="btn btn-success" id="search_btn">搜尋</button>
+                </div>
+            </div>
+            <a class="btn btn-primary" href="course_insert.php">新增課程</a>
         </div>
         
 
@@ -248,6 +276,64 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
         let courseDelete = new bootstrap.Modal(document.getElementById('courseDelete'), {
             keyboard: false
         })
+        let courseDeleteAll = new bootstrap.Modal(document.getElementById('courseDeleteAll'), {
+            keyboard: false
+        })
+
+        // search功能
+        $("#search_btn").click(function () {
+            // 依照不同的condition去不同的db找
+            let inputValue = $("#search").val();
+            let condtion = $("#condition").val();
+            if(inputValue != "") {
+                let formData = new FormData();
+                formData.append("input_value", inputValue);
+                formData.append("condition", condtion);
+                axios.post("../API/doCourseSearch.php", formData)
+                    .then(function (response) {
+                        let data = response.data;
+                        if (data.status === 1) {
+                            //alert(data.message);
+                            $("#target").empty();
+                            let reloadCodes = "";
+                            let count = 1;
+                                data.data_course.forEach((course) => {
+                                    reloadCodes += `
+                                        <tr>
+                                            <td class="text-center" >
+                                                ${count}
+                                            </td>
+                                            <td class="text-center" >
+                                                <input type="checkbox" class="select" data-courseid="${course.id}">
+                                            </td>
+                                            <td> ${course.course_name} </td>
+                                            <td> ${course.firm_name} </td>
+                                            <td> ${course.created_time} </td>
+                                            <td class="text-center" style="width: 150px;">
+                                                <button  data-id="${course.id}" class="btn btn-primary text-white batch-btn">增減梯次</button>
+                                            </td>
+                                            <td class="text-end" style="width: 150px;">
+                                                <button data-id="${course.id}" class="btn btn-primary text-white info-btn"><i class="fas fa-clipboard-list"></i></button>
+                                                <button data-id="${course.id}" class="btn btn-warning text-white edit-btn"><i class="fas fa-edit"></i></button>
+                                                <button data-id="${course.id}" class="btn btn-danger text-white delete-btn"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>`
+                                    count ++;
+                                })
+                                $("#target").append(reloadCodes);
+                            
+                        } else {
+                            //console.log(data.message);
+                            loadData()
+                            alert(data.message)
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+                }
+          })
+
 
         // 全選
         $("#select-all").click( function () {
@@ -272,9 +358,19 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                 }
             })
         })
-
         // 刪除全部已選的東東
         $("#delete_selected").click(function () {
+            // 判斷是否至少有一個打勾
+            $(".select").each(function() {
+                if($(this).prop("checked")) {
+                    courseDeleteAll.show()
+                    return;
+                };
+            })
+            
+        })
+        // 送出刪除全部已選的東東
+        $("#courseDeleteAllBtn").click(function() {
             let selectedId = [];
             $(".select").each(function() {
                 //console.log($(this));
@@ -303,10 +399,7 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                 });
         })
 
-
-
-
-
+        
         // loading 課程
         function loadData() {
             // location.reload();
