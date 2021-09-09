@@ -54,5 +54,5 @@ if (isset($_POST["article_id_arr"])) {
 
 
 echo json_encode($data);
-$courses_db_host = null;
+$forum_db_host = null;
 // $firm_db_host = null;

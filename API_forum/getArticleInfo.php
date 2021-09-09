@@ -34,5 +34,5 @@ if($stmt_article -> rowCount() === 0) {
   }
 
 echo json_encode($data);
-$courses_db_host = null;
-$firm_db_host = null;
+$forum_db_host = null;
+

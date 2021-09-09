@@ -37,30 +37,38 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                 </div>
                 <div class="modal-body">
                     <table class="table courseInfoTable infoTable">
-                        <tr>
-                            <td>課程名稱: </td>
-                            <td><span id="course-name"></span></td>
-                        </tr>
-                        <tr>
-                            <td>課程體驗商: </td>
-                            <td><span id="firm_name"></span></td>
-                        </tr>
-                        <tr>
-                            <td>課程類別: </td>
-                            <td><span id="course_category"></span></td>
-                        </tr>
-                        <tr>
-                            <td>課程地區: </td>
-                            <td><span id="course_area"></span></td>
-                        </tr>
-                        <tr>
-                            <td>課程單價: </td>
-                            <td><span id="course_price"></span></td>
-                        </tr>
-                        <tr>
-                            <td>課程規範: </td>
-                            <td><span id="course_caution"></span></td>
-                        </tr>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                            </tr> 
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>課程名稱: </td>
+                                <td><span id="course-name"></span></td>
+                            </tr>
+                            <tr>
+                                <td>課程體驗商: </td>
+                                <td><span id="firm_name"></span></td>
+                            </tr>
+                            <tr>
+                                <td>課程類別: </td>
+                                <td><span id="course_category"></span></td>
+                            </tr>
+                            <tr>
+                                <td>課程地區: </td>
+                                <td><span id="course_area"></span></td>
+                            </tr>
+                            <tr>
+                                <td>課程單價: </td>
+                                <td><span id="course_price"></span></td>
+                            </tr>
+                            <tr>
+                                <td>課程規範: </td>
+                                <td><span id="course_caution"></span></td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -565,7 +573,7 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                         //console.log(response);
                         let data = response.data;
                         if (data.status === 1) {
-                            //alert(data.message);
+                            alert(data.message);
                             loadBatch()
                         } else {
                             console.log(data.message);
@@ -619,14 +627,6 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
         // 送出行程資訊編輯的資料
         $("#doCourseEdit").click(function() {
         $("#courseEditForm").submit();
-
-            // let category_id = $("#category_id").val();
-            // let area_id = $("#area_id").val();
-            // let course_name = $("#course_name").val();
-            // let price = $("#price").val();
-            // let prevFile = $("#prevFile").val();
-            // let caution = $("#caution").val();
-            // console.log(category_id, area_id, course_name, price, prevFile, caution)
         })
 
         // 行程資訊刪除

@@ -70,22 +70,30 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
                 </div>
                 <div class="modal-body">
                     <table class="table articleInfoTable infoTable">
-                        <tr>
-                            <td>文章作者: </td>
-                            <td><span id="email"></span></td>
-                        </tr>
-                        <tr>
-                            <td>文章標題: </td>
-                            <td><span id="article_title"></span></td>
-                        </tr>
-                        <tr>
-                            <td>文章內容: </td>
-                            <td><span id="article_text"></span></td>
-                        </tr>
-                        <tr>
-                            <td>發佈時間: </td>
-                            <td><span id="created_time"></span></td>
-                        </tr>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                            </tr> 
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>文章作者: </td>
+                                <td><span id="email"></span></td>
+                            </tr>
+                            <tr>
+                                <td>文章標題: </td>
+                                <td><span id="article_title"></span></td>
+                            </tr>
+                            <tr>
+                                <td>文章內容: </td>
+                                <td><span id="article_text"></span></td>
+                            </tr>
+                            <tr>
+                                <td>發佈時間: </td>
+                                <td><span id="created_time"></span></td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -161,7 +169,7 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">文章留言編輯</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">留言新增編輯</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -169,18 +177,11 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
                     <table class="table table-sm articleCommentInfoTable">
                         <thead>
                         <tr>
-                            <th><h6>當前文章留言</h6></th>
+                            <th></th>
                         </tr> 
                         </thead>
                         <tbody id="commentTarget">
-                            <tr>
-                                <td class="text-center">
-                                    <div>
-                                        <div id="client_name">某某智障使用者 <button type="button" class="btn-close"></button></div>
-                                        <div id="comment">標題標題記者標題韓國瑜光頭標題標題記者標題韓國瑜光頭</div> 
-                                    </div>
-                                </td>
-                            </tr>
+
                         </tbody>
                     </table>
                     </div>
@@ -327,9 +328,10 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
                 console.log(error);
             });
     })
+    // 將id設為全域變數
+    let id = 0;
 
-    // 先將資料跑出來一次
-    loadData()
+    // loading 文章
     function loadData() {
       // location.reload();
       let formData = new FormData();
@@ -374,15 +376,58 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
               console.log(error);
           });
     }
+    // loading comments
+    function loadComment() {
+            let formData = new FormData();
+                formData.append("article_id", id);
+                axios.post("../API_forum/doLoadComment.php", formData)  // 丟入/API/user.php抓當前id的資料
+                    .then(function (response) {
+                        let data = response.data;
+                        console.log(data);
+                        // return;
+                        if(data.status === 1) {
+                            let commentCode = "";
+                            data.data_comment.forEach((comment) => {
+                                commentCode += `
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <strong>使用者email：</strong>${comment.email}
+                                            <button id="commentDeleteBtn" data-commentid="${comment.id}" data-articleid="${comment.article_id}" type="button" class="btn-close text-left"></button> 
+                                        </div>
+                                        <div><strong>留言內容：</strong>${comment.comment_text}</div>
+                                        <div><strong>留言時間：</strong>${comment.created_time}</div>
+                                    </td>
+                                </tr>
+                                `
+                            });
+                            $("#commentTarget").empty();
+                            $("#commentTarget").append(commentCode);
+                        } else {
+                            //alert(data.message)
+                            $("#commentTarget").empty();
+                            //$("#commentTarget").append(batchCode);
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log("error happend!");
+                        console.log(error);
+                    });
+        }
 
+
+
+
+    // 先將資料跑出來一次
+    loadData();
+    
     // reload btn click
     $("#reload").click(function() {
         loadData();
     })
 
 
-    // 將id設為全域變數
-    let id = 0;
+
 
     // 文章新增
     $("#inssertArticle").click(function() {
@@ -427,7 +472,7 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
             axios.post("../API_forum/getArticleInfo.php", formData)  // 丟入/API/user.php抓當前id的資料
                 .then(function (response) {
                 let data = response.data;
-                // console.log(data);
+                //console.log(data);
                 // return;
                     if(data.status === 1) {
                         $("#articleEditForm > #article_id").val(data.data_article.id);
@@ -481,16 +526,64 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
     // 評論編輯
     $("#target").on("click", ".comment-info-btn", function(){
         id = $(this).data("id");
+        loadComment();
         articleCommentInfo.show();
     });
-
+    // 新增評論
     $("#insert_comment").click(function() {
         //console.log(id);
         let comment_client_id = $("#comment_client_id").val();
         let article_comment = $("#article_comment").val();
+        //console.log(comment_client_id, article_comment);
+        let formData = new FormData();
+            formData.append("comment_client_id", comment_client_id);
+            formData.append("article_id", id);
+            formData.append("article_comment", article_comment);
+            axios.post("../API_forum/doCommentInsert.php", formData)  // 丟入/API/user.php抓當前id的資料
+                .then(function (response) {
+                    // console.log(response);
+                    let data = response.data;
+                    if (data.status === 1) {
+                        //alert(data.message);
+                        loadComment();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
 
-        console.log(comment_client_id, article_comment);
+        // 送出留言後清空input
+        $("#comment_client_id").val("");
+        $("#article_comment").val("");
     })
+    // 送出評論刪除
+    $("#commentTarget").on("click", "#commentDeleteBtn", function() {
+        let comment_id = $(this).data("commentid");
+        //let article_id = $(this).data("articleid");
+        //console.log(comment_id, article_id);
+
+        let formData = new FormData();
+            formData.append("comment_id", comment_id );
+            axios.post("../API_forum/doCommentDelete.php", formData)  // 丟入/API/user.php抓當前id的資料
+                .then(function (response) {
+                    //console.log(response);
+                    let data = response.data;
+                    if (data.status === 1) {
+                        alert(data.message);
+                        loadComment();
+                    } else {
+                        console.log(data.message);
+                        alert("沒有刪除成功欸ㄏㄏ！")
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+    })
+
+    
     
 
 
