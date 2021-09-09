@@ -175,7 +175,7 @@ else {
     //echo("seccuessfully! with no file");
     $_SESSION["success_msg"] = "課程資料更新成功囉(不含圖片及行程介紹檔)！";
     header("location: course_list.php");
-  } catch (error $e) {
+  } catch (PDOException $e) {
     // echo ("update failed");
     $_SESSION["error_msg"] = "課程資料更新失敗！";
     header("location: course_list.php");

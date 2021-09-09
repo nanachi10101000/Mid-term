@@ -73,8 +73,8 @@ require_once ("sidebarCSS.php");
                 </button>
                 <div class="collapse" id="firm-collapse5">
                     <ul id="nav_dropdown" class="nav_dropdown list-unstyled fw-normal small">
-                        <li id="nav_dropdown_li" class="pb-1"><a class="fs-5 fw-bolder">討論區管理</a></li>
-                        <li id="nav_dropdown_li" class="pb-1"><a class="fs-5 fw-bolder">新增文章</a></li>
+                        <li id="nav_dropdown_li" class="pb-1"><a class="fs-5 fw-bolder" href="/Mid-term/forum/article_list.php">討論區管理</a></li>
+                        <li id="nav_dropdown_li" class="pb-1"><a class="fs-5 fw-bolder" href="/Mid-term/forum/article_insert.php">新增文章</a></li>
                     </ul>
                 </div>
             </li>

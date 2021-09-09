@@ -20,10 +20,14 @@
       }
 
       .modal-content {
-            max-height: 600px;
+            max-height: 700px;
             overflow: scroll;
       }
 
+      .modal-body {
+            max-height: 500px;
+            overflow: scroll;
+      }
 
       body{
             position: relative;

@@ -28,7 +28,7 @@ try {
   //echo("seccuessfully! with no file");
   $_SESSION["success_msg"] = "地區資料更新成功囉！";
   header("location: category_list.php");
-} catch (error $e) {
+} catch (PDOException $e) {
   // echo ("update failed");
   $_SESSION["error_msg"] = "地區資料更新失敗！";
   header("location: category_list.php");

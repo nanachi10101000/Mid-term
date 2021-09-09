@@ -86,20 +86,20 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                         <tbody id="batchTarget">
                             <tr>
                                 <td class="text-center">
-                                    <span id="batch-date">2021/08/30</span>
-                                    <button type="button" class="btn-close"></button>
+                                    <!-- <span id="batch-date">2021/08/30</span> -->
+                                    <!-- <button type="button" class="btn-close"></button> -->
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+                <div class="modal-footer">
                     <form class="form-inline">
                         <div class="form-group mb-2">
-                            <input type="date" class="form-controlt" id="batch_date" value="">
+                            <input type="date" class="form-control" id="batch_date" value="">
                         </div>
                         <button type="button" class="btn btn-primary mb-2" id="insertBatch">新增梯次</button>
-                    </form>
-                </div>
-                <div class="modal-footer">          
+                    </form>         
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
                 </div>
             </div>
@@ -228,6 +228,7 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                     <select id="condition">
                         <option value="1">依課程搜</option>
                         <option value="2">依體驗商搜</option>
+                        <option value="3">依地區搜</option>
                     </select>
                     <input type="text" class="form-control" id="search">
                     <button class="btn btn-success" id="search_btn">搜尋</button>
@@ -250,6 +251,7 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                     </th>
                     <th>課程名稱</th>
                     <th>體驗商名稱</th>
+                    <th>地區名稱</th>
                     <th>建立時間</th>
                     <th>梯次新建刪除</th>
                     <th></th>
@@ -297,33 +299,34 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                             $("#target").empty();
                             let reloadCodes = "";
                             let count = 1;
-                                data.data_course.forEach((course) => {
-                                    reloadCodes += `
-                                        <tr>
-                                            <td class="text-center" >
-                                                ${count}
-                                            </td>
-                                            <td class="text-center" >
-                                                <input type="checkbox" class="select" data-courseid="${course.id}">
-                                            </td>
-                                            <td> ${course.course_name} </td>
-                                            <td> ${course.firm_name} </td>
-                                            <td> ${course.created_time} </td>
-                                            <td class="text-center" style="width: 150px;">
-                                                <button  data-id="${course.id}" class="btn btn-primary text-white batch-btn">增減梯次</button>
-                                            </td>
-                                            <td class="text-end" style="width: 150px;">
-                                                <button data-id="${course.id}" class="btn btn-primary text-white info-btn"><i class="fas fa-clipboard-list"></i></button>
-                                                <button data-id="${course.id}" class="btn btn-warning text-white edit-btn"><i class="fas fa-edit"></i></button>
-                                                <button data-id="${course.id}" class="btn btn-danger text-white delete-btn"><i class="fas fa-trash"></i></button>
-                                            </td>
-                                        </tr>`
-                                    count ++;
-                                })
-                                $("#target").append(reloadCodes);
+                            data.data_course.forEach((course) => {
+                                reloadCodes += `
+                                    <tr>
+                                        <td class="text-center" >
+                                            ${count}
+                                        </td>
+                                        <td class="text-center" >
+                                            <input type="checkbox" class="select" data-courseid="${course.id}">
+                                        </td>
+                                        <td> ${course.course_name} </td>
+                                        <td> ${course.firm_name} </td>
+                                        <td> ${course.area_name} </td>
+                                        <td> ${course.created_time} </td>
+                                        <td class="text-center" style="width: 150px;">
+                                            <button  data-id="${course.id}" class="btn btn-primary text-white batch-btn">增減梯次</button>
+                                        </td>
+                                        <td class="text-end" style="width: 150px;">
+                                            <button data-id="${course.id}" class="btn btn-primary text-white info-btn"><i class="fas fa-clipboard-list"></i></button>
+                                            <button data-id="${course.id}" class="btn btn-warning text-white edit-btn"><i class="fas fa-edit"></i></button>
+                                            <button data-id="${course.id}" class="btn btn-danger text-white delete-btn"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>`
+                                count ++;
+                            })
+                            $("#target").append(reloadCodes);
                             
                         } else {
-                            //console.log(data.message);
+                            //console.log(response);
                             loadData()
                             alert(data.message)
                         }
@@ -337,13 +340,9 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
 
         // 全選
         $("#select-all").click( function () {
-            //console.log($(this));
-            //console.log($(this).prop("checked"))
             if($(this).prop("checked")) {
-                //console.log("check");
                 $("#target").find(".select").prop("checked", true);
             } else {
-                //console.log("no check")
                 $("#target").find(".select").prop("checked", false);
             }
         })
@@ -424,6 +423,7 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                                             </td>
                                             <td> ${course.course_name} </td>
                                             <td> ${course.firm_name} </td>
+                                            <td> ${course.area_name} </td>
                                             <td> ${course.created_time} </td>
                                             <td class="text-center" style="width: 150px;">
                                                 <button  data-id="${course.id}" class="btn btn-primary text-white batch-btn">增減梯次</button>
@@ -590,7 +590,7 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                 axios.post("../API/getCourseInfo.php", formData)  // 丟入/API/user.php抓當前id的資料
                     .then(function (response) {
                     let data = response.data;
-                        console.log(data);
+                        //console.log(data);
                         //return;
                         if(data.status === 1) {
                         $("#course_id").val(data.data_course.id);
@@ -610,7 +610,7 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                     .catch(function (error) {
                     console.log(error);
                     });
-            console.log($(".modal-content").scrollTop());
+            //console.log($(".modal-content").scrollTop());
             courseEdit.show();
         })
 
