@@ -4,8 +4,8 @@
 <!-- fontAwesome -->
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<link type="text/css" rel="stylesheet" href="simplePagination.js/simplePagination.css"/>
-<script type="text/javascript" src="simplePagination.js/jquery.simplePagination.js"></script>
+<!-- simplePagination -->
+<link type="text/css" rel="stylesheet" href="/simplePagination/simplePagination.css"/>
 
 <style>
       /* 所有彈出式視窗的table, 最左邊的td */
@@ -44,7 +44,9 @@
             margin: 0 auto;
       }
 
-      .sorting{
+      .sorting,
+      .course-insert-form,
+      .pageChange{
             min-width: 1070px;
             padding: 0 10rem 0 10rem;
             margin: 0 auto;

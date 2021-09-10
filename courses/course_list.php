@@ -242,7 +242,7 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                     <button class="btn btn-success" id="search_btn">搜尋</button>
                 </div>
             </div>
-            <a class="btn btn-primary" href="course_insert.php">新增課程</a>
+            <button class="btn btn-primary" href="course_insert.php">新增課程</button>
         </div>
         
 
@@ -269,6 +269,18 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                     
                 </tbody>
             </table>
+            <div class="pageChange">
+                <select id="listNumber">
+                    <?php for($i = 1; $i <= 10; $i++): ?>
+                        <option value="<?= $i ?>" <?php if($i == 8) echo "selected" ?>>
+                         <?= $i ?>
+                        </option>
+                    <?php endfor; ?>
+                </select>
+                <button id="prevBtn" type="button" class="btn btn-primary btn-sm">Prev</button></button>
+                <button id="nextBtn" type="button" class="btn btn-primary btn-sm">Next</button></button>
+                <p>第 <span id="pageNumber"></span> 頁 | 共 <span id="totalPage"></span> 頁</p>
+            </div>
         </div>
     </div>
 
@@ -290,61 +302,7 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
             keyboard: false
         })
 
-        // search功能
-        $("#search_btn").click(function () {
-            // 依照不同的condition去不同的db找
-            let inputValue = $("#search").val();
-            let condtion = $("#condition").val();
-            if(inputValue != "") {
-                let formData = new FormData();
-                formData.append("input_value", inputValue);
-                formData.append("condition", condtion);
-                axios.post("../API/doCourseSearch.php", formData)
-                    .then(function (response) {
-                        let data = response.data;
-                        if (data.status === 1) {
-                            //alert(data.message);
-                            $("#target").empty();
-                            let reloadCodes = "";
-                            let count = 1;
-                            data.data_course.forEach((course) => {
-                                reloadCodes += `
-                                    <tr>
-                                        <td class="text-center" >
-                                            ${count}
-                                        </td>
-                                        <td class="text-center" >
-                                            <input type="checkbox" class="select" data-courseid="${course.id}">
-                                        </td>
-                                        <td> ${course.course_name} </td>
-                                        <td> ${course.firm_name} </td>
-                                        <td> ${course.area_name} </td>
-                                        <td> ${course.created_time} </td>
-                                        <td class="text-center" style="width: 150px;">
-                                            <button  data-id="${course.id}" class="btn btn-primary text-white batch-btn">增減梯次</button>
-                                        </td>
-                                        <td class="text-end" style="width: 150px;">
-                                            <button data-id="${course.id}" class="btn btn-primary text-white info-btn"><i class="fas fa-clipboard-list"></i></button>
-                                            <button data-id="${course.id}" class="btn btn-warning text-white edit-btn"><i class="fas fa-edit"></i></button>
-                                            <button data-id="${course.id}" class="btn btn-danger text-white delete-btn"><i class="fas fa-trash"></i></button>
-                                        </td>
-                                    </tr>`
-                                count ++;
-                            })
-                            $("#target").append(reloadCodes);
-                            
-                        } else {
-                            //console.log(response);
-                            loadData()
-                            alert(data.message)
-                        }
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-                }
-          })
-
+        
 
         // 全選
         $("#select-all").click( function () {
@@ -405,55 +363,180 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                     console.log(error);
                 });
         })
-
         
-        // loading 課程
-        function loadData() {
-            // location.reload();
-            let formData = new FormData();
-                axios.post("../API/doLoadCourse.php", formData)  // 丟入/API/user.php抓當前id的資料
+
+        // 將id設為全域變數
+        let id = 0;
+        // 頁碼預設第一頁
+        let page = 1;
+
+
+        // 換頁功能
+        $("#pageNumber").text(page);
+        $("#listNumber").on("change", function() {
+            let inputValue = $("#search").val();
+            if (inputValue == "") {
+                loadData();
+            } else {
+                doSearch();
+            }
+            
+        })
+        $("#prevBtn").click(function () {
+            if(page > 1) {
+                page--;
+                $("#pageNumber").text(page);
+                let inputValue = $("#search").val();
+                if (inputValue == "") {
+                    loadData();
+                } else {
+                    doSearch();
+                }
+            }
+        })
+        $("#nextBtn").click(function () {
+            if ($("#pageNumber").text() !== $("#totalPage").text()) {
+                page++;
+                $("#pageNumber").text(page);
+                let inputValue = $("#search").val();
+                if (inputValue == "") {
+                    loadData();
+                } else {
+                    doSearch();
+                }
+            }
+        })
+
+        // search function
+        function doSearch() {
+            // 依照不同的condition去不同的db找
+            let inputValue = $("#search").val();
+            let condtion = $("#condition").val();
+            if(inputValue != "") {
+                let formData = new FormData();
+                formData.append("input_value", inputValue);
+                formData.append("condition", condtion);
+                axios.post("../API/doCourseSearch.php", formData)
                     .then(function (response) {
                         let data = response.data;
-                        //console.log(data);
-
                         if (data.status === 1) {
-                            $("#target").empty();
+                            $("#target").empty(); // 先移除所有tr
+                            let course = data.data_course;
                             let reloadCodes = "";
                             let count = 1;
-                                data.data_course.forEach((course) => {
-                                    reloadCodes += `
-                                        <tr>
-                                            <td class="text-center" >
-                                                ${count}
-                                            </td>
-                                            <td class="text-center" >
-                                                <input type="checkbox" class="select" data-courseid="${course.id}">
-                                            </td>
-                                            <td> ${course.course_name} </td>
-                                            <td> ${course.firm_name} </td>
-                                            <td> ${course.area_name} </td>
-                                            <td> ${course.created_time} </td>
-                                            <td class="text-center" style="width: 150px;">
-                                                <button  data-id="${course.id}" class="btn btn-primary text-white batch-btn">增減梯次</button>
-                                            </td>
-                                            <td class="text-end" style="width: 150px;">
-                                                <button data-id="${course.id}" class="btn btn-primary text-white info-btn"><i class="fas fa-clipboard-list"></i></button>
-                                                <button data-id="${course.id}" class="btn btn-warning text-white edit-btn"><i class="fas fa-edit"></i></button>
-                                                <button data-id="${course.id}" class="btn btn-danger text-white delete-btn"><i class="fas fa-trash"></i></button>
-                                            </td>
-                                        </tr>`
-                                    count ++;
-                                })
-                                $("#target").append(reloadCodes);
+
+                            // 判斷頁碼
+                            let listNumber = $("#listNumber").val(); // 一頁顯示數量
+                            let dataLength = course.length; // 總共拿到多少資料
+                            let totalPage = Math.ceil(dataLength / listNumber); // 共需要幾頁
+
+                            $("#totalPage").text(totalPage);
+
+                            for(let i = (page - 1) * listNumber; i < listNumber * page; i++){
+                                if(i >= dataLength) {
+                                    break;
+                                }
+
+                                reloadCodes += `
+                                    <tr>
+                                        <td class="text-center" >
+                                            ${count}
+                                        </td>
+                                        <td class="text-center" >
+                                            <input type="checkbox" class="select" data-courseid="${course[i].id}">
+                                        </td>
+                                        <td> ${course[i].course_name} </td>
+                                        <td> ${course[i].firm_name} </td>
+                                        <td> ${course[i].area_name} </td>
+                                        <td> ${course[i].created_time} </td>
+                                        <td class="text-center" style="width: 150px;">
+                                            <button  data-id="${course[i].id}" class="btn btn-primary text-white batch-btn">增減梯次</button>
+                                        </td>
+                                        <td class="text-end" style="width: 150px;">
+                                            <button data-id="${course[i].id}" class="btn btn-primary text-white info-btn"><i class="fas fa-clipboard-list"></i></button>
+                                            <button data-id="${course[i].id}" class="btn btn-warning text-white edit-btn"><i class="fas fa-edit"></i></button>
+                                            <button data-id="${course[i].id}" class="btn btn-danger text-white delete-btn"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>`
+                                count ++;
+                            };
+                            $("#target").append(reloadCodes);
                         } else {
-                            //alert(data.message);
-                            $("#target").empty();
-                            console.log(data.message);
+                            //console.log(response);
+                            loadData()
+                            alert(data.message)
                         }
                     })
                     .catch(function (error) {
                         console.log(error);
                     });
+            }
+        } 
+
+        // 按下search Btn
+        $("#search_btn").click(function () {
+            doSearch();
+        })
+        
+        // loading 課程
+        function loadData() {
+            // location.reload();
+            let formData = new FormData();
+            axios.post("../API/doLoadCourse.php", formData) 
+                .then(function (response) {
+                    let data = response.data;
+                    //console.log(data);
+
+                    if (data.status === 1) {
+                        $("#target").empty();
+                        let course = data.data_course;
+                        let reloadCodes = "";
+                        let count = 1;
+
+                        // 判斷頁碼
+                        let listNumber = $("#listNumber").val(); // 一頁顯示數量
+                        let dataLength = course.length; // 總共拿到多少資料
+                        let totalPage = Math.ceil(dataLength / listNumber); // 共需要幾頁
+
+                        $("#totalPage").text(totalPage);
+                        for(let i = (page - 1) * listNumber; i < listNumber * page; i++){
+                            if(i >= dataLength) {
+                                break;
+                            }
+
+                            reloadCodes += `
+                                <tr>
+                                    <td class="text-center" >
+                                        ${count}
+                                    </td>
+                                    <td class="text-center" >
+                                        <input type="checkbox" class="select" data-courseid="${course[i].id}">
+                                    </td>
+                                    <td> ${course[i].course_name} </td>
+                                    <td> ${course[i].firm_name} </td>
+                                    <td> ${course[i].area_name} </td>
+                                    <td> ${course[i].created_time} </td>
+                                    <td class="text-center" style="width: 150px;">
+                                        <button  data-id="${course[i].id}" class="btn btn-primary text-white batch-btn">增減梯次</button>
+                                    </td>
+                                    <td class="text-end" style="width: 150px;">
+                                        <button data-id="${course[i].id}" class="btn btn-primary text-white info-btn"><i class="fas fa-clipboard-list"></i></button>
+                                        <button data-id="${course[i].id}" class="btn btn-warning text-white edit-btn"><i class="fas fa-edit"></i></button>
+                                        <button data-id="${course[i].id}" class="btn btn-danger text-white delete-btn"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>`
+                            count ++;
+                        };
+                        $("#target").append(reloadCodes);
+                    } else {
+                        //alert(data.message);
+                        $("#target").empty();
+                        console.log(data.message);
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
         }
         // loading 梯次
         function loadBatch() {
@@ -489,7 +572,7 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                     });
         }
 
-        // 先lode一次data
+        // 先將資料跑出來一次
         loadData();
 
         // reload btn click
@@ -497,8 +580,6 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
             loadData();
         })
         
-        // 將id設為全域變數
-        let id = 0;
 
         // 行程資訊
         $("#target").on("click", ".info-btn", function(){

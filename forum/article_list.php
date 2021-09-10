@@ -177,7 +177,7 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
                     <table class="table table-sm articleCommentInfoTable">
                         <thead>
                         <tr>
-                            <th></th>
+                            <th>當前文章留言：</th>
                         </tr> 
                         </thead>
                         <tbody id="commentTarget">
@@ -215,11 +215,22 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
         <div class="title display-6 text-start fw-bold">
             文章以及討論區管理
         </div>
-
         <div class="sorting d-flex justify-content-between">
-            <button class="btn btn-primary" id="reload">Reload</button>
+            <div class="d-flex" style="max-height: 40px;">
+                <button class="btn btn-primary" id="reload">Reload</button>
+                <div class="input-group ">
+                    <select id="condition">
+                        <option value="1">依標題搜</option>
+                        <option value="2">依作者搜</option>
+                        <option value="3">依內文搜</option>
+                    </select>
+                    <input type="text" class="form-control" id="search">
+                    <button class="btn btn-success" id="search_btn">搜尋</button>
+                </div>
+            </div>
             <button class="btn btn-primary" id="inssertArticle">新增文章</button>
         </div>
+
 
         <div id="table_wrap">
             <table class="table">
@@ -241,6 +252,18 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
                 <tbody id="target" class="fs-6">
                 </tbody>
             </table>
+            <div class="pageChange">
+                <select id="listNumber">
+                    <?php for($i = 1; $i <= 10; $i++): ?>
+                        <option value="<?= $i ?>" <?php if($i == 8) echo "selected" ?>>
+                         <?= $i ?>
+                        </option>
+                    <?php endfor; ?>
+                </select>
+                <button id="prevBtn" type="button" class="btn btn-primary btn-sm">Prev</button></button>
+                <button id="nextBtn" type="button" class="btn btn-primary btn-sm">Next</button></button>
+                <p>第 <span id="pageNumber"></span> 頁 | 共 <span id="totalPage"></span> 頁</p>
+            </div>
         </div>
     </div>
 
@@ -263,6 +286,8 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
     let articleCommentInfo = new bootstrap.Modal(document.getElementById('articleCommentInfo'), {
         keyboard: false
     })
+
+
 
     // 全選
     $("#select-all").click( function () {
@@ -330,51 +355,171 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
     })
     // 將id設為全域變數
     let id = 0;
+    // 頁碼預設第一頁
+    let page = 1;
+
+    // 換頁功能
+    $("#pageNumber").text(page);
+    $("#listNumber").on("change", function() {
+        let inputValue = $("#search").val();
+        if (inputValue == "") {
+            loadData();
+        } else {
+            doSearch();
+        }
+        
+    })
+
+    $("#prevBtn").click(function () {
+        if(page > 1) {
+            page--;
+            $("#pageNumber").text(page);
+            let inputValue = $("#search").val();
+            if (inputValue == "") {
+                loadData();
+            } else {
+                doSearch();
+            }
+        }
+    })
+    $("#nextBtn").click(function () {
+        if ($("#pageNumber").text() !== $("#totalPage").text()) {
+            page++;
+            $("#pageNumber").text(page);
+            let inputValue = $("#search").val();
+            if (inputValue == "") {
+                loadData();
+            } else {
+                doSearch();
+            }
+        }
+    })
+    
+    // search function
+    function doSearch() {
+        // 依照不同的condition去不同的db找
+        let inputValue = $("#search").val();
+        let condtion = $("#condition").val();
+        if(inputValue != "") {
+            let formData = new FormData();
+            formData.append("input_value", inputValue);
+            formData.append("condition", condtion);
+            axios.post("../API_forum/doArticleSearch.php", formData)
+                .then(function (response) {
+                    let data = response.data;
+                    //console.log(data);
+
+                    if (data.status === 1) {
+                        $("#target").empty(); // 先移除所有tr
+                        let article = data.data_article;
+                        let reloadCodes = "";
+                        let count = 1;
+
+                        // 判斷頁碼
+                        let listNumber = $("#listNumber").val(); // 一頁顯示數量
+                        let dataLength = article.length; // 總共拿到多少資料
+                        let totalPage = Math.ceil(dataLength / listNumber); // 共需要幾頁
+
+                        $("#totalPage").text(totalPage);
+
+                        for(let i = (page - 1) * listNumber; i < listNumber * page; i++){
+                            if(i >= dataLength) {
+                                break;
+                            }
+                            reloadCodes += `
+                                <tr>
+                                <td class="text-center" >
+                                    ${count}
+                                </td>                          
+                                <td class="text-center" >
+                                    <input type="checkbox" data-articleid="${article[i].id}" class="select">
+                                </td>
+                                    <td> ${article[i].article_title} </td>
+                                    <td> ${article[i].email} </td>
+                                    <td> ${article[i].created_time} </td>
+                                    <td> <button data-id="${article[i].id}" class="btn btn-primary text-white comment-info-btn">留言編輯</button> </td>
+                                    <td class="text-end" style="width: 150px;">
+                                        <button data-id="${article[i].id}" class="btn btn-primary text-white info-btn"><i class="fas fa-clipboard-list"></i></button>
+                                        <button data-id="${article[i].id}" class="btn btn-warning text-white edit-btn"><i class="fas fa-edit"></i></button>
+                                        <button data-id="${article[i].id}" class="btn btn-danger text-white delete-btn"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>`
+                            count ++;
+                        };   
+                        $("#target").append(reloadCodes);
+                    } else {
+                        //alert(data.message);
+                        //$("#target").empty();
+                        loadData()
+                        alert(data.message)
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+    }
+
+    // 按下search Btn
+    $("#search_btn").click(function () {
+        doSearch();
+    })
 
     // loading 文章
     function loadData() {
-      // location.reload();
-      let formData = new FormData();
-        axios.post("../API_forum/doLoadArticle.php", formData)  // 丟入/API/user.php抓當前id的資料
-          .then(function (response) {
-            let data = response.data;
-            // console.log(data);
-            // return;
-            if (data.status === 1) {
-              $("#target").empty();
-              let reloadCodes = "";
-              let count = 1;
-                  data.data_article.forEach((article) => {
-                      reloadCodes += `
-                          <tr>
+        // location.reload();
+        let formData = new FormData();
+        axios.post("../API_forum/doLoadArticle.php", formData) 
+            .then(function (response) {
+                let data = response.data;
+
+                if (data.status === 1) {
+                    $("#target").empty();
+                    let article = data.data_article;
+                    let reloadCodes = "";
+                    let count = 1; 
+        
+                    // 判斷頁碼
+                    let listNumber = $("#listNumber").val(); // 一頁顯示數量
+                    let dataLength = article.length; // 總共拿到多少資料
+                    let totalPage = Math.ceil(dataLength / listNumber);  // 共需要幾頁
+                    
+                    $("#totalPage").text(totalPage);
+                    
+                    for(let i = (page - 1) * listNumber; i < listNumber * page; i++){
+                        if(i >= dataLength) {
+                            break;
+                        }
+                        reloadCodes += `
+                            <tr>
                             <td class="text-center" >
                                 ${count}
                             </td>                          
                             <td class="text-center" >
-                                <input type="checkbox" data-articleid="${article.id}" class="select">
+                                <input type="checkbox" data-articleid="${article[i].id}" class="select">
                             </td>
-                              <td> ${article.article_title} </td>
-                              <td> ${article.email} </td>
-                              <td> ${article.created_time} </td>
-                              <td> <button data-id="${article.id}" class="btn btn-primary text-white comment-info-btn">留言編輯</button> </td>
-                              <td class="text-end" style="width: 150px;">
-                                  <button data-id="${article.id}" class="btn btn-primary text-white info-btn"><i class="fas fa-clipboard-list"></i></button>
-                                  <button data-id="${article.id}" class="btn btn-warning text-white edit-btn"><i class="fas fa-edit"></i></button>
-                                  <button data-id="${article.id}" class="btn btn-danger text-white delete-btn"><i class="fas fa-trash"></i></button>
-                              </td>
-                          </tr>`
-                          count ++;
-                  })
-                  $("#target").append(reloadCodes);
-            } else {
-                //alert(data.message);
-                $("#target").empty();
-                console.log(data.message);
-            }
-          })
-          .catch(function (error) {
-              console.log(error);
-          });
+                                <td> ${article[i].article_title} </td>
+                                <td> ${article[i].email} </td>
+                                <td> ${article[i].created_time} </td>
+                                <td> <button data-id="${article[i].id}" class="btn btn-primary text-white comment-info-btn">留言編輯</button> </td>
+                                <td class="text-end" style="width: 150px;">
+                                    <button data-id="${article[i].id}" class="btn btn-primary text-white info-btn"><i class="fas fa-clipboard-list"></i></button>
+                                    <button data-id="${article[i].id}" class="btn btn-warning text-white edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button data-id="${article[i].id}" class="btn btn-danger text-white delete-btn"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>`
+                        count ++;
+                    };   
+                    $("#target").append(reloadCodes);
+                } else {
+                    //alert(data.message);
+                    $("#target").empty();
+                    console.log(data.message);
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
     // loading comments
     function loadComment() {
@@ -383,7 +528,7 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
                 axios.post("../API_forum/doLoadComment.php", formData)  // 丟入/API/user.php抓當前id的資料
                     .then(function (response) {
                         let data = response.data;
-                        console.log(data);
+                        //console.log(data);
                         // return;
                         if(data.status === 1) {
                             let commentCode = "";
@@ -583,10 +728,52 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
                 });
     })
 
-    
-    
 
 
+// function loadData() {
+//       // location.reload();
+//       let formData = new FormData();
+//         axios.post("../API_forum/doLoadArticle.php", formData)  // 丟入/API/user.php抓當前id的資料
+//           .then(function (response) {
+//             let data = response.data;
+//             // console.log(data);
+//             // return;
+//             if (data.status === 1) {
+//               $("#target").empty();
+//               let reloadCodes = "";
+//               let count = 1;
+//                   data.data_article.forEach((article) => {
+//                       reloadCodes += `
+//                           <tr>
+//                             <td class="text-center" >
+//                                 ${count}
+//                             </td>                          
+//                             <td class="text-center" >
+//                                 <input type="checkbox" data-articleid="${article.id}" class="select">
+//                             </td>
+//                               <td> ${article.article_title} </td>
+//                               <td> ${article.email} </td>
+//                               <td> ${article.created_time} </td>
+//                               <td> <button data-id="${article.id}" class="btn btn-primary text-white comment-info-btn">留言編輯</button> </td>
+//                               <td class="text-end" style="width: 150px;">
+//                                   <button data-id="${article.id}" class="btn btn-primary text-white info-btn"><i class="fas fa-clipboard-list"></i></button>
+//                                   <button data-id="${article.id}" class="btn btn-warning text-white edit-btn"><i class="fas fa-edit"></i></button>
+//                                   <button data-id="${article.id}" class="btn btn-danger text-white delete-btn"><i class="fas fa-trash"></i></button>
+//                               </td>
+//                           </tr>`
+//                           count ++;
+//                   })
+//                   $("#target").append(reloadCodes);
+//             } else {
+//                 //alert(data.message);
+//                 $("#target").empty();
+//                 console.log(data.message);
+//             }
+//           })
+//           .catch(function (error) {
+//               console.log(error);
+//           });
+//     }
 </script>
 </body>
 </html>

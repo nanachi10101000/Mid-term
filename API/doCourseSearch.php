@@ -1,7 +1,6 @@
 <?php
   require_once("../DB-Connect/PDO-Connect_firm.php");
   require_once("../DB-Connect/PDO-Connect_courses.php");
-  require_once("../DB-Connect/PDO-Connect_image.php");
 
   if(!isset($_POST["input_value"]) || !isset($_POST["condition"])) {
     header("location: /Mid-term/courses/course_list.php");
