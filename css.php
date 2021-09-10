@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
 <!-- simplePagination -->
-<link type="text/css" rel="stylesheet" href="/simplePagination/simplePagination.css"/>
+<link type="text/css" rel="stylesheet" href="./simplePagination/simplePagination.css"/>
 
 <style>
       /* 所有彈出式視窗的table, 最左邊的td */
@@ -20,18 +20,40 @@
       }
 
       .modal-content {
-            max-height: 700px;
+            max-height: 670px;
             overflow: scroll;
       }
 
       .modal-body {
-            max-height: 500px;
+            max-height: 480px;
             overflow: scroll;
       }
 
+      label,
+      .label {
+            font-weight: bold;
+      }
+      thead tr {
+            background-color: #EA9774 !important;
+      }
+
+      tbody  tr:nth-child(2n) {
+            background-color: #F5F5F5 !important;
+      }
+
+      tbody  tr:hover {
+            background-color: #FFDAB9 !important;
+            cursor: pointer;
+      }
+
+
+
+
+
+
       body{
             position: relative;
-            background: #F9F1EE;
+            background-color: #F9F1EE !important;
       }
 
       .page_box{
@@ -109,6 +131,7 @@
             padding: 1rem 10rem  1rem 10rem;
       }
 
+
       /*標題粗體*/
       table tr th{
             font-weight: bold;
@@ -140,7 +163,7 @@
       /*頁數外框*/
       .simplePagination_box{
             min-width: 1070px;
-            padding: 0 10rem 0 10rem;
+            padding: 0 50rem 0 10rem;
             margin: 0 auto;
       }
 

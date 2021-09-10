@@ -48,14 +48,23 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
                 </div>
                 <div class="modal-body">
                     <table class="table areaInfoTable infoTable">
-                        <tr>
-                            <td>地區名稱: </td>
-                            <td><span id="area_name"></span></td>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                            </thead>
                         </tr>
-                        <tr>
-                            <td>地區細節: </td>
-                            <td><span id="area_detail"></span></td>
-                        </tr>
+                        <tbody>
+                            <tr>
+                                <td class="label">地區名稱: </td>
+                                <td><span id="area_name"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="label">地區細節: </td>
+                                <td><span id="area_detail"></span></td>
+                            </tr>
+                        </tbody>
+                        
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -148,11 +157,15 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
             <table class="table">
                 <thead class="table_head fs-6 fw-bold">
                 <tr class="text-center" >
-                    <th>#</th>
+                    <th>
+                        <button class="btn btn-danger btn-sm" id="delete_selected">刪除</button>
+                        <div>
+                            #
+                        </div>
+                    </th>
                     <th class="text-center" style="width: 70px;" >
                         全選 <input type="checkbox" id="select-all"> 
                         反選 <input type="checkbox" id="select-all-r"> 
-                        <button class="btn btn-danger btn-sm" id="delete_selected">刪除</button>
                     </th>
                     <th>地區名稱</th>
                     <th>地區詳細資訊</th>
@@ -247,6 +260,16 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
                 console.log(error);
             });
     })
+
+    // 點擊tr 直接選取
+    $("#target").on("click", "tr", function () {
+        let checked = $(this).find(".select").prop("checked");
+        if (checked) {
+            $(this).find(".select").prop("checked", false);
+        } else {
+            $(this).find(".select").prop("checked", true);
+        }
+    });
 
     // 先將資料跑出來一次
     loadData()

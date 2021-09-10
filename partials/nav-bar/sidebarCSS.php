@@ -23,6 +23,7 @@
         width: calc(200px + 2vw);
         background: #EA9774;
         z-index: 5;
+        overflow: scroll;
     }
 
     .nav button{

@@ -45,27 +45,27 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                         </thead>
                         <tbody>
                             <tr>
-                                <td>課程名稱: </td>
+                                <td class="label">課程名稱: </td>
                                 <td><span id="course-name"></span></td>
                             </tr>
                             <tr>
-                                <td>課程體驗商: </td>
+                                <td class="label">課程體驗商: </td>
                                 <td><span id="firm_name"></span></td>
                             </tr>
                             <tr>
-                                <td>課程類別: </td>
+                                <td class="label">課程類別: </td>
                                 <td><span id="course_category"></span></td>
                             </tr>
                             <tr>
-                                <td>課程地區: </td>
+                                <td class="label">課程地區: </td>
                                 <td><span id="course_area"></span></td>
                             </tr>
                             <tr>
-                                <td>課程單價: </td>
+                                <td class="label">課程單價: </td>
                                 <td><span id="course_price"></span></td>
                             </tr>
                             <tr>
-                                <td>課程規範: </td>
+                                <td class="label">課程規範: </td>
                                 <td><span id="course_caution"></span></td>
                             </tr>
                         </tbody>
@@ -242,7 +242,7 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                     <button class="btn btn-success" id="search_btn">搜尋</button>
                 </div>
             </div>
-            <button class="btn btn-primary" href="course_insert.php">新增課程</button>
+            <a class="btn btn-primary" href="course_insert.php">新增課程</a>
         </div>
         
 
@@ -251,17 +251,21 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
             <table class="table">
                 <thead class="table_head fs-6 fw-bold">
                 <tr class="fs-6 fw-bold">
-                    <th>#</th>
+                    <th>
+                        <button class="btn btn-danger btn-sm" id="delete_selected">刪除</button>
+                        <div>
+                            #
+                        </div>
+                    </th>
                     <th class="text-center" style="width: 70px;" >
                         全選 <input type="checkbox" id="select-all"> 
                         反選 <input type="checkbox" id="select-all-r">
-                        <button class="btn btn-danger btn-sm" id="delete_selected">刪除</button>
                     </th>
                     <th>課程名稱</th>
                     <th>體驗商名稱</th>
                     <th>地區名稱</th>
                     <th>建立時間</th>
-                    <th>梯次新建刪除</th>
+                    <th>梯次編輯</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -277,8 +281,8 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                         </option>
                     <?php endfor; ?>
                 </select>
-                <button id="prevBtn" type="button" class="btn btn-primary btn-sm">Prev</button></button>
-                <button id="nextBtn" type="button" class="btn btn-primary btn-sm">Next</button></button>
+                <button id="prevBtn" type="button" class="btn btn-primary btn-sm">Prev</button>
+                <button id="nextBtn" type="button" class="btn btn-primary btn-sm">Next</button>
                 <p>第 <span id="pageNumber"></span> 頁 | 共 <span id="totalPage"></span> 頁</p>
             </div>
         </div>
@@ -477,6 +481,16 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
         $("#search_btn").click(function () {
             doSearch();
         })
+
+        // 點擊tr 直接選取
+        $("#target").on("click", "tr", function () {
+            let checked = $(this).find(".select").prop("checked");
+            if (checked) {
+                $(this).find(".select").prop("checked", false);
+            } else {
+                $(this).find(".select").prop("checked", true);
+            }
+        });
         
         // loading 課程
         function loadData() {
@@ -551,7 +565,7 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                             data.data_batch.forEach((batch) => {
                                 batchCode += `
                                 <tr>
-                                    <td class="text-center">
+                                    <td class="text-center d-flex justify-content-between">
                                         <span id="batch-date">${batch.batch_date}</span>
                                         <button id="batchDeleteBtn" type="button" class="btn-close" data-courseid="${batch.course_id}" data-batchdate="${batch.batch_date} "></button>
                                     </td>

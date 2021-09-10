@@ -48,14 +48,20 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
                 </div>
                 <div class="modal-body">
                     <table class="table categoryInfoTable infoTable">
-                        <tr>
-                            <td>類別名稱: </td>
-                            <td><span id="category_name"></span></td>
-                        </tr>
-                        <tr>
-                            <td>類別細節: </td>
-                            <td><span id="category_detail"></span></td>
-                        </tr>
+                        <thead>
+                            <th></th>
+                            <th></th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="label">類別名稱: </td>
+                                <td><span id="category_name"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="label">類別細節: </td>
+                                <td><span id="category_detail"></span></td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -148,11 +154,15 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
             <table class="table">
                 <thead class="table_head fs-6 fw-bold">
                 <tr class="text-center">
-                    <th>#</th>
+                    <th>
+                        <button class="btn btn-danger btn-sm" id="delete_selected">刪除</button>
+                        <div>
+                            #
+                        </div>
+                    </th>
                     <th class="text-center" style="width: 70px;" >
                         全選 <input type="checkbox" id="select-all">
                         反選 <input type="checkbox" id="select-all-r">
-                        <button class="btn btn-danger btn-sm" id="delete_selected">刪除</button>
                     </th>
                     <th>類別名稱</th>
                     <th>類別詳細資訊</th>
@@ -249,6 +259,16 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
             });
 
     })
+
+    // 點擊tr 直接選取
+    $("#target").on("click", "tr", function () {
+        let checked = $(this).find(".select").prop("checked");
+        if (checked) {
+            $(this).find(".select").prop("checked", false);
+        } else {
+            $(this).find(".select").prop("checked", true);
+        }
+    });
 
 
     // 先將資料跑出來一次

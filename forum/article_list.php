@@ -260,8 +260,8 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
                         </option>
                     <?php endfor; ?>
                 </select>
-                <button id="prevBtn" type="button" class="btn btn-primary btn-sm">Prev</button></button>
-                <button id="nextBtn" type="button" class="btn btn-primary btn-sm">Next</button></button>
+                <button id="prevBtn" type="button" class="btn btn-primary btn-sm">Prev</button>
+                <button id="nextBtn" type="button" class="btn btn-primary btn-sm">Next</button>
                 <p>第 <span id="pageNumber"></span> 頁 | 共 <span id="totalPage"></span> 頁</p>
             </div>
         </div>
@@ -727,53 +727,6 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
                     console.log(error);
                 });
     })
-
-
-
-// function loadData() {
-//       // location.reload();
-//       let formData = new FormData();
-//         axios.post("../API_forum/doLoadArticle.php", formData)  // 丟入/API/user.php抓當前id的資料
-//           .then(function (response) {
-//             let data = response.data;
-//             // console.log(data);
-//             // return;
-//             if (data.status === 1) {
-//               $("#target").empty();
-//               let reloadCodes = "";
-//               let count = 1;
-//                   data.data_article.forEach((article) => {
-//                       reloadCodes += `
-//                           <tr>
-//                             <td class="text-center" >
-//                                 ${count}
-//                             </td>                          
-//                             <td class="text-center" >
-//                                 <input type="checkbox" data-articleid="${article.id}" class="select">
-//                             </td>
-//                               <td> ${article.article_title} </td>
-//                               <td> ${article.email} </td>
-//                               <td> ${article.created_time} </td>
-//                               <td> <button data-id="${article.id}" class="btn btn-primary text-white comment-info-btn">留言編輯</button> </td>
-//                               <td class="text-end" style="width: 150px;">
-//                                   <button data-id="${article.id}" class="btn btn-primary text-white info-btn"><i class="fas fa-clipboard-list"></i></button>
-//                                   <button data-id="${article.id}" class="btn btn-warning text-white edit-btn"><i class="fas fa-edit"></i></button>
-//                                   <button data-id="${article.id}" class="btn btn-danger text-white delete-btn"><i class="fas fa-trash"></i></button>
-//                               </td>
-//                           </tr>`
-//                           count ++;
-//                   })
-//                   $("#target").append(reloadCodes);
-//             } else {
-//                 //alert(data.message);
-//                 $("#target").empty();
-//                 console.log(data.message);
-//             }
-//           })
-//           .catch(function (error) {
-//               console.log(error);
-//           });
-//     }
 </script>
 </body>
 </html>
