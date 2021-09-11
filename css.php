@@ -48,7 +48,7 @@
 
       tbody  tr:hover {
             background-color: #FFDAB9 !important;
-            cursor: pointer;
+            /* cursor: pointer; */
       }
 
       /* .pageChange {

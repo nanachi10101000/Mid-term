@@ -572,41 +572,41 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
     }
     // loading comments
     function loadComment() {
-            let formData = new FormData();
-                formData.append("article_id", id);
-                axios.post("../API_forum/doLoadComment.php", formData)  // 丟入/API/user.php抓當前id的資料
-                    .then(function (response) {
-                        let data = response.data;
-                        //console.log(data);
-                        // return;
-                        if(data.status === 1) {
-                            let commentCode = "";
-                            data.data_comment.forEach((comment) => {
-                                commentCode += `
-                                <tr>
-                                    <td>
-                                        <div>
-                                            <strong>使用者email：</strong>${comment.email}
-                                            <button id="commentDeleteBtn" data-commentid="${comment.id}" data-articleid="${comment.article_id}" type="button" class="btn-close text-left"></button> 
-                                        </div>
-                                        <div><strong>留言內容：</strong>${comment.comment_text}</div>
-                                        <div><strong>留言時間：</strong>${comment.created_time}</div>
-                                    </td>
-                                </tr>
-                                `
-                            });
-                            $("#commentTarget").empty();
-                            $("#commentTarget").append(commentCode);
-                        } else {
-                            //alert(data.message)
-                            $("#commentTarget").empty();
-                            //$("#commentTarget").append(batchCode);
-                        }
-                    })
-                    .catch(function (error) {
-                        console.log("error happend!");
-                        console.log(error);
+        let formData = new FormData();
+        formData.append("article_id", id);
+        axios.post("../API_forum/doLoadComment.php", formData)  // 丟入/API/user.php抓當前id的資料
+            .then(function (response) {
+                let data = response.data;
+                //console.log(data);
+                // return;
+                if(data.status === 1) {
+                    let commentCode = "";
+                    data.data_comment.forEach((comment) => {
+                        commentCode += `
+                        <tr>
+                            <td>
+                                <div class="d-flex justify-content-between">
+                                    <p><strong>使用者email：</strong>${comment.email}</p>
+                                    <button id="commentDeleteBtn" data-commentid="${comment.id}" data-articleid="${comment.article_id}" type="button" class="btn-close text-left"></button> 
+                                </div>
+                                <div><strong>留言內容：</strong>${comment.comment_text}</div>
+                                <div><strong>留言時間：</strong>${comment.created_time}</div>
+                            </td>
+                        </tr>
+                        `
                     });
+                    $("#commentTarget").empty();
+                    $("#commentTarget").append(commentCode);
+                } else {
+                    //alert(data.message)
+                    $("#commentTarget").empty();
+                    //$("#commentTarget").append(batchCode);
+                }
+            })
+            .catch(function (error) {
+                console.log("error happend!");
+                console.log(error);
+            });
         }
 
 
