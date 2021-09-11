@@ -26,7 +26,7 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body>
     <div class="modal fade" id="articleInsert" tabindex="-1" aria-labelledby="articleInsert" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog big-modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">新增文章</h5>
@@ -103,7 +103,7 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
     <div class="modal fade" id="articleEdit" tabindex="-1" aria-labelledby="articleEdit" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog big-modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">文章資料修改</h5>
@@ -166,7 +166,7 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <div class="modal fade" id="articleCommentInfo" tabindex="-1" aria-labelledby="articleCommentInfo" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog big-modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">留言新增編輯</h5>
@@ -246,22 +246,27 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
                     <th>文章作者</th>
                     <th>文章建立時間</th>     
                     <th>留言編輯</th>     
-                    <th></th>
+                    <th>
+                        顯示
+                        <select id="listNumber" >
+                            <?php for($i = 1; $i <= 10; $i++): ?>
+                                <option value="<?= $i ?>" <?php if($i == 8) echo "selected" ?>>
+                                <?= $i ?>
+                                </option>
+                            <?php endfor; ?>
+                        </select>
+                        筆
+                    </th>
                 </tr>
                 </thead>
                 <tbody id="target" class="fs-6">
                 </tbody>
             </table>
             <div class="pageChange">
-                <select id="listNumber">
-                    <?php for($i = 1; $i <= 10; $i++): ?>
-                        <option value="<?= $i ?>" <?php if($i == 8) echo "selected" ?>>
-                         <?= $i ?>
-                        </option>
-                    <?php endfor; ?>
-                </select>
-                <button id="prevBtn" type="button" class="btn btn-primary btn-sm">Prev</button>
-                <button id="nextBtn" type="button" class="btn btn-primary btn-sm">Next</button>
+                <button id="goFirstBtn" type="button" class="btn btn-primary btn-sm">第一頁</button>
+                <button id="prevBtn" type="button" class="btn btn-primary btn-sm">前頁</button>
+                <button id="nextBtn" type="button" class="btn btn-primary btn-sm">下頁</button>
+                <button id="goEndBtn" type="button" class="btn btn-primary btn-sm">最後頁</button>
                 <p>第 <span id="pageNumber"></span> 頁 | 共 <span id="totalPage"></span> 頁</p>
             </div>
         </div>
@@ -353,6 +358,23 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
                 console.log(error);
             });
     })
+
+    // 防止點擊checkbox時 事件傳導到tr的click event
+    $("#target").on("click", ":checkbox", function (e) {
+        e.stopPropagation();
+    });
+
+    // 點擊tr 直接選取
+    $("#target").on("click", "tr", function (e) {
+        e.stopPropagation();
+        let checked = $(this).find(".select").prop("checked");
+        if (checked) {
+            $(this).find(".select").prop("checked", false);
+        } else {
+            $(this).find(".select").prop("checked", true);
+        }
+    });
+
     // 將id設為全域變數
     let id = 0;
     // 頁碼預設第一頁
@@ -361,7 +383,11 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
     // 換頁功能
     $("#pageNumber").text(page);
     $("#listNumber").on("change", function() {
-        let inputValue = $("#search").val();
+        // 更改顯示幾筆資料當下，將頁數回到第一頁
+        page = 1
+        $("#pageNumber").text(page);
+
+        let inputValue = $("#search").val(); // 判斷當前有無在搜尋
         if (inputValue == "") {
             loadData();
         } else {
@@ -392,6 +418,29 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
             } else {
                 doSearch();
             }
+        }
+    })
+    $("#goFirstBtn").click(function () {
+        page = 1;
+        $("#pageNumber").text(page);
+        let inputValue = $("#search").val();
+
+        if (inputValue == "") {
+            loadData();
+        } else {
+            doSearch();
+        }
+            
+    })
+    $("#goEndBtn").click(function () {
+        page = $("#totalPage").text();
+        $("#pageNumber").text(page);
+        let inputValue = $("#search").val();
+
+        if (inputValue == "") {
+            loadData();
+        } else {
+            doSearch();
         }
     })
     
@@ -568,7 +617,14 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
     
     // reload btn click
     $("#reload").click(function() {
-        loadData();
+        // 判斷當前是要重整搜尋後的data 還是一般重整
+        let inputValue = $("#search").val();
+
+        if (inputValue == "") {
+            loadData();
+        } else {
+            doSearch();
+        }
     })
 
 

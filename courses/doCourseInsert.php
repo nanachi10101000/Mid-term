@@ -58,9 +58,9 @@ if($_FILES["file"]["error"] === 0 && $_FILES["image_file"]["error"] === 0) {
 
         //var_dump($rows_course_info);
         //echo("seccuessfully!");
-        $_SESSION["success_msg"] = "資料新增成功！";
+        $_SESSION["success_msg"] = "課程資料新增成功！";
         header("location: course_list.php");
-      } catch (error $e) {
+      } catch (PDOException $e) {
         //echo ("insert failed");
         //var_dump($e);
         $_SESSION["error_msg"] = "資料新增失敗(1)！";

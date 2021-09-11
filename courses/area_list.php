@@ -14,7 +14,7 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
 </head>
 <body>
     <div class="modal fade" id="areaInsert" tabindex="-1" aria-labelledby="areaInsert" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog bid-modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">新增地區</h5>
@@ -27,8 +27,8 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
                         <input type="text" class="form-control" name="area_name" id="" value="" required />
                       </div>
                       <div class="mb-2">
-                        <label for="">地區詳細資訊：</label>
-                        <input type="text" class="form-control" name="area_detail" id="" value="" required />
+                        <label for="area_detail">地區詳細資訊：</label>
+                        <textarea class="form-control" name="area_detail" id="" cols="30" rows="8" required></textarea>
                       </div>
                   </form>
                 </div>
@@ -74,7 +74,7 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
         </div>
     </div>
     <div class="modal fade" id="areaEdit" tabindex="-1" aria-labelledby="areaEdit" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog big-modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">地區資料修改</h5>
@@ -90,7 +90,7 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
                         </div>
                         <div class="mb-2">
                             <label for="">地區詳細資訊：</label>
-                            <input type="text" class="form-control" name="area_detail" id="area_detail" value="" required>
+                            <textarea class="form-control" name="area_detail" id="area_detail" cols="30" rows="8" required></textarea>
                         </div>
                     </form>
 
@@ -142,7 +142,6 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
     <?php require_once("../partials/nav-bar/sidebar.php") ?>
 
     <div class="page_box">
-        <?php require_once "../partials/message.php"?>
 
         <div class="title display-6 text-start fw-bold">
             地區管理
@@ -152,6 +151,8 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
             <button class="btn btn-primary" id="reload">Reload</button>
             <button class="btn btn-primary" id="inssertArea">新增地區</button>
         </div>
+
+        <?php require_once "../partials/message.php"?>
 
         <div id="table_wrap">
             <table class="table">
@@ -169,12 +170,29 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
                     </th>
                     <th>地區名稱</th>
                     <th>地區詳細資訊</th>
-                    <th></th>
+                    <th>
+                        顯示
+                        <select id="listNumber" >
+                            <?php for($i = 1; $i <= 10; $i++): ?>
+                                <option value="<?= $i ?>" <?php if($i == 8) echo "selected" ?>>
+                                <?= $i ?>
+                                </option>
+                            <?php endfor; ?>
+                        </select>
+                        筆
+                    </th>
                 </tr>
                 </thead>
                 <tbody id="target" class="fs-6">
                 </tbody>
             </table>
+            <div class="pageChange">
+                <button id="goFirstBtn" type="button" class="btn btn-primary btn-sm">第一頁</button>
+                <button id="prevBtn" type="button" class="btn btn-primary btn-sm">前頁</button>
+                <button id="nextBtn" type="button" class="btn btn-primary btn-sm">下頁</button>
+                <button id="goEndBtn" type="button" class="btn btn-primary btn-sm">最後頁</button>
+                <p>第 <span id="pageNumber"></span> 頁 | 共 <span id="totalPage"></span> 頁</p>
+            </div>
         </div>
     </div>
 
@@ -261,6 +279,11 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
             });
     })
 
+    // 防止點擊checkbox時 事件傳導到tr的click event
+    $("#target").on("click", ":checkbox", function (e) {
+        e.stopPropagation();
+    });
+
     // 點擊tr 直接選取
     $("#target").on("click", "tr", function () {
         let checked = $(this).find(".select").prop("checked");
@@ -271,8 +294,46 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
         }
     });
 
-    // 先將資料跑出來一次
-    loadData()
+    
+    // 將id設為全域變數
+    let id = 0;
+    // 頁碼預設第一頁
+    let page = 1;
+
+    // 換頁功能
+    $("#pageNumber").text(page);
+    $("#listNumber").on("change", function() {
+        // 更改顯示幾筆資料當下，將頁數回到第一頁
+        page = 1
+        $("#pageNumber").text(page);
+
+        loadData();   
+    })
+    $("#prevBtn").click(function () {
+        if(page > 1) {
+            page--;
+            $("#pageNumber").text(page);
+            loadData();
+        }
+    })
+    $("#nextBtn").click(function () {
+        if ($("#pageNumber").text() !== $("#totalPage").text()) {
+            page++;
+            $("#pageNumber").text(page);
+            loadData();
+        }
+    })
+    $("#goFirstBtn").click(function () {
+        page = 1;
+        $("#pageNumber").text(page);
+        loadData();      
+    })
+    $("#goEndBtn").click(function () {
+            page = $("#totalPage").text();
+            $("#pageNumber").text(page);
+            loadData();
+    })
+
     function loadData() {
       // location.reload();
       let formData = new FormData();
@@ -282,28 +343,40 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
             //console.log(data);
 
             if (data.status === 1) {
-              $("#target").empty();
-              let reloadCodes = "";
-              let count = 1;
-                  data.data_area.forEach((area) => {
-                      reloadCodes += `
-                          <tr>
-                            <td class="text-center" >
-                                ${count}
-                            </td>                          
-                            <td class="text-center" >
-                                <input type="checkbox" data-areaid="${area.id}" class="select">
+                $("#target").empty();
+                let area = data.data_area;
+                let reloadCodes = "";
+                let count = 1;
+
+                // 判斷頁碼
+                let listNumber = $("#listNumber").val(); // 一頁顯示數量
+                let dataLength = area.length; // 總共拿到多少資料
+                let totalPage = Math.ceil(dataLength / listNumber); // 共需要幾頁
+
+                $("#totalPage").text(totalPage);
+                for(let i = (page - 1) * listNumber; i < listNumber * page; i++){
+                    if(i >= dataLength) {
+                        break;
+                    }
+
+                    reloadCodes += `
+                        <tr>
+                        <td class="text-center" >
+                            ${count}
+                        </td>                          
+                        <td class="text-center" >
+                            <input type="checkbox" data-areaid="${area[i].id}" class="select">
+                        </td>
+                            <td> ${area[i].area_name} </td>
+                            <td> ${area[i].area_detail} </td>
+                            <td class="text-end" style="width: 150px;">
+                                <button data-id="${area[i].id}" class="btn btn-primary text-white info-btn"><i class="fas fa-clipboard-list"></i></button>
+                                <button data-id="${area[i].id}" class="btn btn-warning text-white edit-btn"><i class="fas fa-edit"></i></button>
+                                <button data-id="${area[i].id}" class="btn btn-danger text-white delete-btn"><i class="fas fa-trash"></i></button>
                             </td>
-                              <td> ${area.area_name} </td>
-                              <td> ${area.area_detail} </td>
-                              <td class="text-end" style="width: 150px;">
-                                  <button data-id="${area.id}" class="btn btn-primary text-white info-btn"><i class="fas fa-clipboard-list"></i></button>
-                                  <button data-id="${area.id}" class="btn btn-warning text-white edit-btn"><i class="fas fa-edit"></i></button>
-                                  <button data-id="${area.id}" class="btn btn-danger text-white delete-btn"><i class="fas fa-trash"></i></button>
-                              </td>
-                          </tr>`
-                          count ++;
-                  })
+                        </tr>`
+                        count ++;
+                  };
                   $("#target").append(reloadCodes);
             } else {
                 //alert(data.message);
@@ -314,16 +387,19 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
           .catch(function (error) {
               console.log(error);
           });
-    }
+    };
+
+    // 先將資料跑出來一次
+    loadData();
+
 
     // reload btn click
     $("#reload").click(function() {
         loadData();
-    })
+    });
 
 
-    // 將id設為全域變數
-    let id = 0;
+
 
     $("#inssertArea").click(function() {
       //doInsertArea.php
@@ -342,6 +418,7 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
             axios.post("../API/getAreaInfo.php", formData)  // 丟入/API/user.php抓當前id的資料
                 .then(function (response) {
                 let data = response.data
+                console.log($("#area_detail"));
                 // return;
                     if(response.data.status === 1) {
                         $("#area_name").text(data.data_area.area_name);

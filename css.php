@@ -10,7 +10,8 @@
 <style>
       /* 所有彈出式視窗的table, 最左邊的td */
       .infoTable tr td:first-child{
-            min-width: 110px;
+            width: 110px;
+            max-width: 120px;
       }
 
       .course-insert-form {
@@ -27,6 +28,10 @@
       .modal-body {
             max-height: 480px;
             overflow: scroll;
+      }
+
+      .big-modal {
+            min-width: 650px;
       }
 
       label,
@@ -46,6 +51,11 @@
             cursor: pointer;
       }
 
+      /* .pageChange {
+            display: flex;
+            justify-content: center;
+      } */
+
 
 
 
@@ -58,6 +68,15 @@
 
       .page_box{
             margin-left: 230px;
+      }
+
+      .alert-box {
+            min-width: 1070px;
+            padding: 0 10rem 0 10rem;
+            margin: 0 auto;
+      }
+      .alert {
+            margin: 0.25rem 0 0.25rem 0 !important;
       }
 
       .title{

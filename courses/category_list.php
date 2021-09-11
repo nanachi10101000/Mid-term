@@ -14,7 +14,7 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
 </head>
 <body>
     <div class="modal fade" id="categoryInsert" tabindex="-1" aria-labelledby="categoryInsert" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog big-modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">新增類別</h5>
@@ -28,7 +28,7 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
                       </div>
                       <div class="mb-2">
                         <label for="">類別詳細資訊：</label>
-                        <input type="text" class="form-control" name="category_detail" id="" value="" required />
+                        <textarea class="form-control" name="category_detail" id="" cols="30" rows="8" required></textarea>
                       </div>
                   </form>
                 </div>
@@ -49,7 +49,7 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
                 <div class="modal-body">
                     <table class="table categoryInfoTable infoTable">
                         <thead>
-                            <th></th>
+                            <th>類別詳細資料</th>
                             <th></th>
                         </thead>
                         <tbody>
@@ -71,7 +71,7 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
         </div>
     </div>
     <div class="modal fade" id="categoryEdit" tabindex="-1" aria-labelledby="categoryEdit" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog big-modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">類別資料修改</h5>
@@ -87,7 +87,7 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
                         </div>
                         <div class="mb-2">
                             <label for="">類別詳細資訊：</label>
-                            <input type="text" class="form-control" name="category_detail" id="category_detail" value="" required>
+                            <textarea class="form-control" name="category_detail" id="category_detail" cols="30" rows="8" required></textarea>
                         </div>
                     </form>
 
@@ -138,7 +138,6 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
     <?php require_once("../partials/nav-bar/sidebar.php") ?>
 
     <div class="page_box">
-        <?php require_once "../partials/message.php"?>
 
         <div class="title display-6 text-start fw-bold">
             類別管理
@@ -149,6 +148,7 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
             <button class="btn btn-primary" id="inssertCategory">新增類別</button>
         </div>
 
+        <?php require_once "../partials/message.php"?>
 
         <div id="table_wrap">
             <table class="table">
@@ -166,12 +166,29 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
                     </th>
                     <th>類別名稱</th>
                     <th>類別詳細資訊</th>
-                    <th></th>
+                    <th>
+                        顯示
+                        <select id="listNumber" >
+                            <?php for($i = 1; $i <= 10; $i++): ?>
+                                <option value="<?= $i ?>" <?php if($i == 8) echo "selected" ?>>
+                                <?= $i ?>
+                                </option>
+                            <?php endfor; ?>
+                        </select>
+                        筆
+                    </th>
                 </tr>
                 </thead>
                 <tbody id="target" class="fs-6">
                 </tbody>
             </table>
+            <div class="pageChange">
+                <button id="goFirstBtn" type="button" class="btn btn-primary btn-sm">第一頁</button>
+                <button id="prevBtn" type="button" class="btn btn-primary btn-sm">前頁</button>
+                <button id="nextBtn" type="button" class="btn btn-primary btn-sm">下頁</button>
+                <button id="goEndBtn" type="button" class="btn btn-primary btn-sm">最後頁</button>
+                <p>第 <span id="pageNumber"></span> 頁 | 共 <span id="totalPage"></span> 頁</p>
+            </div>
         </div>
     </div>
 
@@ -257,8 +274,12 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
             .catch(function (error) {
                 console.log(error);
             });
-
     })
+
+    // 防止點擊checkbox時 事件傳導到tr的click event
+    $("#target").on("click", ":checkbox", function (e) {
+        e.stopPropagation();
+    });
 
     // 點擊tr 直接選取
     $("#target").on("click", "tr", function () {
@@ -269,10 +290,49 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
             $(this).find(".select").prop("checked", true);
         }
     });
+    
+
+    // 將id設為全域變數
+    let id = 0;
+    // 頁碼預設第一頁
+    let page = 1;
+
+    // 換頁功能
+    $("#pageNumber").text(page);
+    $("#listNumber").on("change", function() {
+        // 更改顯示幾筆資料當下，將頁數回到第一頁
+        page = 1
+        $("#pageNumber").text(page);
+
+        loadData();   
+    })
+    $("#prevBtn").click(function () {
+        if(page > 1) {
+            page--;
+            $("#pageNumber").text(page);
+            loadData();
+        }
+    })
+    $("#nextBtn").click(function () {
+        if ($("#pageNumber").text() !== $("#totalPage").text()) {
+            page++;
+            $("#pageNumber").text(page);
+            loadData();
+        }
+    })
+    $("#goFirstBtn").click(function () {
+        page = 1;
+        $("#pageNumber").text(page);
+        loadData();      
+    })
+    $("#goEndBtn").click(function () {
+            page = $("#totalPage").text();
+            $("#pageNumber").text(page);
+            loadData();
+    })
 
 
-    // 先將資料跑出來一次
-    loadData()
+    // loading 類別
     function loadData() {
       // location.reload();
       let formData = new FormData();
@@ -281,29 +341,41 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
             let data = response.data;
             //console.log(data);
             if (data.status === 1) {
-              $("#target").empty();
-              let reloadCodes = "";
-              let count = 1;
-                  data.data_category.forEach((category) => {
-                      reloadCodes += `
-                          <tr>
-                            <td class="text-center" >
-                                ${count}
-                            </td> 
-                            <td class="text-center" >
-                                <input type="checkbox" data-categoryid="${category.id}" class="select">
+                $("#target").empty();
+                let category = data.data_category;
+                let reloadCodes = "";
+                let count = 1;
+
+                // 判斷頁碼
+                let listNumber = $("#listNumber").val(); // 一頁顯示數量
+                let dataLength = category.length; // 總共拿到多少資料
+                let totalPage = Math.ceil(dataLength / listNumber); // 共需要幾頁
+
+                $("#totalPage").text(totalPage);
+                for(let i = (page - 1) * listNumber; i < listNumber * page; i++){
+                    if(i >= dataLength) {
+                        break;
+                    }
+
+                    reloadCodes += `
+                        <tr>
+                        <td class="text-center" >
+                            ${count}
+                        </td> 
+                        <td class="text-center" >
+                            <input type="checkbox" data-categoryid="${category[i].id}" class="select">
+                        </td>
+                            <td> ${category[i].category_name} </td>
+                            <td> ${category[i].category_detail} </td>
+                            <td class="text-end" style="width: 150px;">
+                                <button data-id="${category[i].id}" class="btn btn-primary text-white info-btn"><i class="fas fa-clipboard-list"></i></button>
+                                <button data-id="${category[i].id}" class="btn btn-warning text-white edit-btn"><i class="fas fa-edit"></i></button>
+                                <button data-id="${category[i].id}" class="btn btn-danger text-white delete-btn"><i class="fas fa-trash"></i></button>
                             </td>
-                              <td> ${category.category_name} </td>
-                              <td> ${category.category_detail} </td>
-                              <td class="text-end" style="width: 150px;">
-                                  <button data-id="${category.id}" class="btn btn-primary text-white info-btn"><i class="fas fa-clipboard-list"></i></button>
-                                  <button data-id="${category.id}" class="btn btn-warning text-white edit-btn"><i class="fas fa-edit"></i></button>
-                                  <button data-id="${category.id}" class="btn btn-danger text-white delete-btn"><i class="fas fa-trash"></i></button>
-                              </td>
-                          </tr>`
-                          count ++;
-                  })
-                  $("#target").append(reloadCodes);
+                        </tr>`
+                        count ++;
+                };
+                $("#target").append(reloadCodes);
             } else {
                 //alert(data.message);
                 $("#target").empty();
@@ -313,16 +385,17 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
           .catch(function (error) {
               console.log(error);
           });
-    }
+    };
+
+    // 先將資料跑出來一次
+    loadData();
 
     // reload btn click
     $("#reload").click(function() {
         loadData();
-    })
+    });
 
 
-    // 將id設為全域變數
-    let id = 0;
 
     $("#inssertCategory").click(function() {
       //doInsertcategory.php

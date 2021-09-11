@@ -26,11 +26,11 @@ try {
   $stmt_category = $courses_db_host -> prepare($sql_category);
   $stmt_category -> execute([$category_name, $category_detail, $category_id]);
   //echo("seccuessfully! with no file");
-  $_SESSION["success_msg"] = "地區資料更新成功囉！";
+  $_SESSION["success_msg"] = "類別資料更新成功囉！";
   header("location: category_list.php");
 } catch (PDOException $e) {
   // echo ("update failed");
-  $_SESSION["error_msg"] = "地區資料更新失敗！";
+  $_SESSION["error_msg"] = "類別資料更新失敗！";
   header("location: category_list.php");
   var_dump($e);
 }
