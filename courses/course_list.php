@@ -207,11 +207,11 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                 </div>
                 <div class="modal-footer justify-content-between">
                     <form class="form-inline d-flex">
-                        <div class="form-group mb-2">
+                        <div class="input-group mb-2">
                             <input type="date" class="form-control" id="batch_date" value="">
+                            <button type="button" class="btn btn-primary" id="insertBatch">新增梯次</button>
                         </div>
-                        <button type="button" class="btn btn-primary mb-2" id="insertBatch">新增梯次</button>
-                    </form>         
+                    </form> 
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
                 </div>
             </div>
@@ -298,13 +298,8 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                     
                 </tbody>
             </table>
-            <div class="pageChange">
-                <button id="goFirstBtn" type="button" class="btn btn-primary btn-sm">第一頁</button>
-                <button id="prevBtn" type="button" class="btn btn-primary btn-sm">前頁</button>
-                <button id="nextBtn" type="button" class="btn btn-primary btn-sm">下頁</button>
-                <button id="goEndBtn" type="button" class="btn btn-primary btn-sm">最後頁</button>
-                <p>第 <span id="pageNumber"></span> 頁 | 共 <span id="totalPage"></span> 頁</p>
-            </div>
+            <!-- 換頁的按鈕 -->
+            <?php require_once("../partials/page-system.php") ?>
         </div>
     </div>
 
@@ -391,6 +386,10 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
     $("#target").on("click", ":checkbox", function (e) {
         e.stopPropagation();
     });
+    // 防止點擊button時 事件傳導到tr的click event
+    $("#target").on("click", "button", function(e) {
+        e.stopPropagation();
+    })
 
     // 點擊tr 直接選取
     $("#target").on("click", "tr", function () {
@@ -511,7 +510,7 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                 formData.append("asc_desc_condition", asc_desc_condition);
                 formData.append("asc_desc", asc_desc);
             };
-            
+
             formData.append("input_value", inputValue);
             formData.append("condition", condtion);
             axios.post("../API/doCourseSearch.php", formData)

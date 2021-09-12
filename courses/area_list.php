@@ -190,13 +190,8 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
                 <tbody id="target" class="fs-6">
                 </tbody>
             </table>
-            <div class="pageChange">
-                <button id="goFirstBtn" type="button" class="btn btn-primary btn-sm">第一頁</button>
-                <button id="prevBtn" type="button" class="btn btn-primary btn-sm">前頁</button>
-                <button id="nextBtn" type="button" class="btn btn-primary btn-sm">下頁</button>
-                <button id="goEndBtn" type="button" class="btn btn-primary btn-sm">最後頁</button>
-                <p>第 <span id="pageNumber"></span> 頁 | 共 <span id="totalPage"></span> 頁</p>
-            </div>
+            <!-- 換頁的按鈕 -->
+            <?php require_once("../partials/page-system.php") ?>
         </div>
     </div>
 
@@ -287,6 +282,10 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
     $("#target").on("click", ":checkbox", function (e) {
         e.stopPropagation();
     });
+    // 防止點擊button時 事件傳導到tr的click event
+    $("#target").on("click", "button", function(e) {
+        e.stopPropagation();
+    })
 
     // 點擊tr 直接選取
     $("#target").on("click", "tr", function () {
