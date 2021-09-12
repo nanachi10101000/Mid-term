@@ -77,42 +77,6 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </div>
     </div>
-    <div class="modal fade" id="batchInfo" tabindex="-1" aria-labelledby="batchInfo" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">課程梯次編輯</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <table class="table table-sm batchTable">
-                        <thead>
-                        <tr>
-                            <th><h6>當前課程梯次</h6></th>
-                        </tr> 
-                        </thead>
-                        <tbody id="batchTarget">
-                            <tr>
-                                <td class="text-center">
-                                    <!-- <span id="batch-date">2021/08/30</span> -->
-                                    <!-- <button type="button" class="btn-close"></button> -->
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <form class="form-inline">
-                        <div class="form-group mb-2">
-                            <input type="date" class="form-control" id="batch_date" value="">
-                        </div>
-                        <button type="button" class="btn btn-primary mb-2" id="insertBatch">新增梯次</button>
-                    </form>         
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="modal fade" id="courseEdit" tabindex="-1" aria-labelledby="courseEdit" aria-hidden="true">
         <div class="modal-dialog big-modal">
             <div class="modal-content">
@@ -217,6 +181,42 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </div>
     </div>
+    <div class="modal fade" id="batchInfo" tabindex="-1" aria-labelledby="batchInfo" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">課程梯次編輯</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-sm batchTable">
+                        <thead>
+                        <tr>
+                            <th><h6>當前課程梯次</h6></th>
+                        </tr> 
+                        </thead>
+                        <tbody id="batchTarget">
+                            <tr>
+                                <td class="text-center">
+                                    <!-- <span id="batch-date">2021/08/30</span> -->
+                                    <!-- <button type="button" class="btn-close"></button> -->
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <form class="form-inline d-flex">
+                        <div class="form-group mb-2">
+                            <input type="date" class="form-control" id="batch_date" value="">
+                        </div>
+                        <button type="button" class="btn btn-primary mb-2" id="insertBatch">新增梯次</button>
+                    </form>         
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <?php require_once("../partials/nav-bar/sidebar.php") ?>
@@ -237,7 +237,7 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                         <option value="2">依體驗商搜</option>
                         <option value="3">依地區搜</option>
                     </select>
-                    <input type="text" class="form-control" id="search">
+                    <input type="text" class="form-control" id="search" >
                     <button class="btn btn-success" id="search_btn">搜尋</button>
                 </div>
             </div>
@@ -260,10 +260,26 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                         全選 <input type="checkbox" id="select-all"> 
                         反選 <input type="checkbox" id="select-all-r">
                     </th>
-                    <th>課程名稱</th>
-                    <th>體驗商名稱</th>
-                    <th>地區名稱</th>
-                    <th>建立時間</th>
+                    <th class="ASC-DESC" data-condition="course">
+                        課程名稱
+                        <i class="fas fa-long-arrow-alt-up"></i>
+                        <i class="fas fa-long-arrow-alt-down"></i>
+                    </th>
+                    <th class="ASC-DESC" data-condition="firm">
+                        體驗商名稱
+                        <i class="fas fa-long-arrow-alt-up"></i>
+                        <i class="fas fa-long-arrow-alt-down"></i>
+                    </th>
+                    <th class="ASC-DESC" data-condition="area">
+                        地區名稱
+                        <i class="fas fa-long-arrow-alt-up"></i>
+                        <i class="fas fa-long-arrow-alt-down"></i>
+                    </th>
+                    <th class="ASC-DESC" data-condition="created_time">
+                        建立時間
+                        <i class="fas fa-long-arrow-alt-up"></i>
+                        <i class="fas fa-long-arrow-alt-down"></i>
+                    </th>
                     <th>梯次編輯</th>
                     <th>
                         顯示
@@ -309,7 +325,6 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
     let courseDeleteAll = new bootstrap.Modal(document.getElementById('courseDeleteAll'), {
         keyboard: false
     })
-
     
 
     // 全選
@@ -394,6 +409,30 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
     let page = 1;
 
 
+    // 生降冪
+    let asc_desc = 1;
+    let asc_desc_condition;
+    $(".ASC-DESC").click(function() {
+        $(this).toggleClass(".active");
+        let inputValue = $("#search").val(); // 判斷當前有無在搜尋
+        asc_desc_condition = $(this).data("condition");
+        //console.log(asc_desc_condition);
+        
+        if($(this).hasClass(".active")) {
+            asc_desc = 1; // 升冪            
+        } else {
+            asc_desc = 0; // 降冪
+        }
+
+        // 判斷有無正在搜尋
+        if (inputValue == "") {
+            loadData();
+        } else {
+            doSearch();
+        }
+    })
+
+
     // 換頁功能
     $("#pageNumber").text(page);
     $("#listNumber").on("change", function() {
@@ -466,6 +505,13 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
         let condtion = $("#condition").val();
         if(inputValue != "") {
             let formData = new FormData();
+
+            // 如果有升降冪的情況
+            if (asc_desc_condition) {
+                formData.append("asc_desc_condition", asc_desc_condition);
+                formData.append("asc_desc", asc_desc);
+            };
+            
             formData.append("input_value", inputValue);
             formData.append("condition", condtion);
             axios.post("../API/doCourseSearch.php", formData)
@@ -533,8 +579,13 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
     
     // loading 課程
     function loadData() {
-        // location.reload();
         let formData = new FormData();
+
+        // 如果有升降冪的情況
+        if (asc_desc_condition) {
+            formData.append("condition", asc_desc_condition);
+            formData.append("asc_desc", asc_desc);
+        }
         axios.post("../API/doLoadCourse.php", formData) 
             .then(function (response) {
                 let data = response.data;
@@ -685,19 +736,17 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
             axios.post("../API/doBatchInsert.php", formData)  // 丟入/API/user.php抓當前id的資料
                 .then(function (response) {
                     let data = response.data;
-                    //console.log(response);
-
                     if(data.status === 1) {
-                        //alert(data.message);
                         loadBatch()
                     } else {
-                        //console.log(data.message);
-                        alert("此梯次日期已經存在！")
+                        //console.log(data);
+                        alert(data.message)
                     }
                 })
                 .catch(function (error) {
                     //console.log("error happend!");
                     //console.log(error);
+                    alert("出了點問題，盡力搶救中！");
                 });
     })
     // 送出梯次刪除

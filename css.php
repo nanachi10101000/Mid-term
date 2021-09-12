@@ -51,6 +51,14 @@
             /* cursor: pointer; */
       }
 
+      .ASC-DESC {
+            cursor: pointer;
+      }
+      th.active {
+            color: white;
+      }
+
+
       /* .pageChange {
             display: flex;
             justify-content: center;
@@ -91,6 +99,9 @@
             min-width: 1070px;
             padding: 0 10rem 0 10rem;
             margin: 0 auto;
+      }
+      .course-insert-form {
+            padding-bottom: 2rem;
       }
 
       .dropdown_list{

@@ -242,9 +242,21 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
                         反選 <input type="checkbox" id="select-all-r"> 
                         <button class="btn btn-danger btn-sm" id="delete_selected">刪除</button>
                     </th>
-                    <th>文章名稱</th>
-                    <th>文章作者</th>
-                    <th>文章建立時間</th>     
+                    <th class="ASC-DESC" data-condition="article">
+                        文章名稱
+                        <i class="fas fa-long-arrow-alt-up"></i>
+                        <i class="fas fa-long-arrow-alt-down"></i>
+                    </th>
+                    <th class="ASC-DESC" data-condition="email">
+                        文章作者
+                        <i class="fas fa-long-arrow-alt-up"></i>
+                        <i class="fas fa-long-arrow-alt-down"></i>
+                    </th>
+                    <th class="ASC-DESC" data-condition="created_time">
+                        文章建立時間
+                        <i class="fas fa-long-arrow-alt-up"></i>
+                        <i class="fas fa-long-arrow-alt-down"></i>
+                    </th>     
                     <th>留言編輯</th>     
                     <th>
                         顯示
@@ -380,6 +392,30 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
     // 頁碼預設第一頁
     let page = 1;
 
+    // 生降冪
+    let asc_desc = 1;
+    let asc_desc_condition;
+    $(".ASC-DESC").click(function() {
+        $(this).toggleClass(".active");
+        let inputValue = $("#search").val(); // 判斷當前有無在搜尋
+        asc_desc_condition = $(this).data("condition");
+
+        
+        if($(this).hasClass(".active")) {
+            asc_desc = 1; // 升冪            
+        } else {
+            asc_desc = 0; // 降冪
+        }
+
+        // 判斷有無正在搜尋
+        if (inputValue == "") {
+            loadData();
+        } else {
+            doSearch();
+        }
+    })
+
+
     // 換頁功能
     $("#pageNumber").text(page);
     $("#listNumber").on("change", function() {
@@ -451,6 +487,13 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
         let condtion = $("#condition").val();
         if(inputValue != "") {
             let formData = new FormData();
+
+            // 如果有升降冪的情況
+            if (asc_desc_condition) {
+                formData.append("asc_desc_condition", asc_desc_condition);
+                formData.append("asc_desc", asc_desc);
+            };
+            
             formData.append("input_value", inputValue);
             formData.append("condition", condtion);
             axios.post("../API_forum/doArticleSearch.php", formData)
@@ -516,8 +559,13 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
 
     // loading 文章
     function loadData() {
-        // location.reload();
         let formData = new FormData();
+
+        // 如果有升降冪的情況
+        if (asc_desc_condition) {
+            formData.append("condition", asc_desc_condition);
+            formData.append("asc_desc", asc_desc);
+        }
         axios.post("../API_forum/doLoadArticle.php", formData) 
             .then(function (response) {
                 let data = response.data;

@@ -47,9 +47,8 @@
       <div class="title display-6 text-start fw-bold">
             課程新增
       </div>
+      <?php require_once("../partials/message.php") ?>
       <div class="form-group course-insert-form">
-          <?php require_once("../partials/message.php") ?>
-          
           <form action="doCourseInsert.php" method="post" enctype="multipart/form-data">
               <div class="mb-2">
                   <label for="">體驗商：</label>
@@ -90,7 +89,7 @@
                   <input type="number" class="form-control" name="price" required>
               </div>
               <div class="mb-2">
-                  <label for="">課程ㄉ圖片：</label>
+                  <label for="">課程相關圖片：</label>
                   <input type="file" class="form-control" name="image_file" required>
               </div>
               <div class="mb-2">

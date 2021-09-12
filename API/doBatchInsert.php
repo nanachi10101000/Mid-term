@@ -12,13 +12,24 @@ $batch_date = $_POST["batch_date"];
 // $batch_date = "2021-09-01";
 date_default_timezone_set("Asia/Taipei"); // 設定時區
 $now = date('Y-m-d H:i:s');
+$now_d = date('Y-m-d');
 
-if(empty($batch_date)){
+if($batch_date < $now_d) {
   $data = [
     "status" => 0,
-    "message" => "請確實填寫日期啦幹！"
+    "message" => "想當時空旅人ㄇ？"
   ];
-} else {
+
+}
+
+elseif(empty($batch_date)){
+  $data = [
+    "status" => 0,
+    "message" => "請確實填寫日期啦！"
+  ];
+} 
+
+else {
 
   try {
     // 將data 存入 batch
@@ -36,7 +47,8 @@ if(empty($batch_date)){
     //var_dump($e);
     $data = [
       "status" => 0,
-      "message" => "Error" . $e ->getMessage()
+      "err_message" => "Error" . $e ->getMessage(),
+      "message" => "此梯次日期已經存在！"
     ];
   }
 }

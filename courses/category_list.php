@@ -164,7 +164,11 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
                         全選 <input type="checkbox" id="select-all">
                         反選 <input type="checkbox" id="select-all-r">
                     </th>
-                    <th>類別名稱</th>
+                    <th class="ASC-DESC" data-condition="category">
+                        類別名稱
+                        <i class="fas fa-long-arrow-alt-up"></i>
+                        <i class="fas fa-long-arrow-alt-down"></i>
+                    </th>
                     <th>類別詳細資訊</th>
                     <th>
                         顯示
@@ -297,6 +301,24 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
     // 頁碼預設第一頁
     let page = 1;
 
+    // 生降冪
+    let asc_desc = 1;
+    let asc_desc_condition;
+    $(".ASC-DESC").click(function() {
+        $(this).toggleClass(".active");
+        asc_desc_condition = $(this).data("condition");
+        console.log(asc_desc_condition);
+        
+        if($(this).hasClass(".active")) {
+            asc_desc = 1; // 升冪
+        } else {
+            asc_desc = 0; // 降冪
+        }
+
+        loadData();
+    })
+
+
     // 換頁功能
     $("#pageNumber").text(page);
     $("#listNumber").on("change", function() {
@@ -334,12 +356,18 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
 
     // loading 類別
     function loadData() {
-      // location.reload();
-      let formData = new FormData();
-        axios.post("../API/doLoadCategory.php", formData)  // 丟入/API/user.php抓當前id的資料
-          .then(function (response) {
+        let formData = new FormData();
+
+        // 如果有升降冪的情況
+        if (asc_desc_condition) {
+            formData.append("condition", asc_desc_condition);
+            formData.append("asc_desc", asc_desc);
+        }
+        axios.post("../API/doLoadCategory.php", formData)  
+        .then(function (response) {
             let data = response.data;
             //console.log(data);
+            
             if (data.status === 1) {
                 $("#target").empty();
                 let category = data.data_category;
