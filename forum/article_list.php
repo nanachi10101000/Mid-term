@@ -235,11 +235,15 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
             <table class="table">
                 <thead class="table_head fs-6 fw-bold">
                 <tr class="text-center" >
-                    <th>#</th>
+                    <th>
+                        <button class="btn btn-danger btn-sm" id="delete_selected">刪除</button>
+                        <div>
+                            #
+                        </div>
+                    </th>
                     <th class="text-center" style="width: 70px;" >
                         全選 <input type="checkbox" id="select-all"> 
                         反選 <input type="checkbox" id="select-all-r"> 
-                        <button class="btn btn-danger btn-sm" id="delete_selected">刪除</button>
                     </th>
                     <th class="ASC-DESC" data-condition="article">
                         文章名稱

@@ -21,12 +21,12 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>course_list</title>
-  <?php require_once "../css.php"?>
-  <?php require_once "../js.php"?>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>course_list</title>
+    <?php require_once "../css.php"?>
+    <?php require_once "../js.php"?>
 </head>
 <body>
     <div class="modal fade" id="courseInfo" tabindex="-1" aria-labelledby="courseInfo" aria-hidden="true">
