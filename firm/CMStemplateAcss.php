@@ -1,4 +1,8 @@
 <script type="text/javascript" src="simplePagination.js/jquery.simplePagination.js"></script>
+<script src="filterList/filterList.js"></script>
+<script src="filterList/jquery.filterList.js"></script>
+
+
 <link type="text/css" rel="stylesheet" href="simplePagination.js/simplePagination.css"/>
 
 <style>

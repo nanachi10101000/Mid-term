@@ -5,13 +5,12 @@
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
 <!-- simplePagination -->
-<link type="text/css" rel="stylesheet" href="./simplePagination/simplePagination.css"/>
+<!-- <link type="text/css" rel="stylesheet" href="./simplePagination/simplePagination.css"/> -->
 
 <style>
       /* 所有彈出式視窗的table, 最左邊的td */
       .infoTable tr td:first-child{
             width: 110px;
-            max-width: 120px;
       }
 
       .course-insert-form {
@@ -56,6 +55,19 @@
       }
       th.active {
             color: white;
+      }
+
+      #course_image_con {
+            width: 100%;
+            height: 400px;
+            position: relative;
+      }
+
+      div.course_image {
+            width: 100%;
+      }
+      div.course_image img {
+            width: 100%;
       }
 
 

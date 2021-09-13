@@ -52,13 +52,16 @@
           <form action="doCourseInsert.php" method="post" enctype="multipart/form-data">
               <div class="mb-2">
                   <label for="">體驗商：</label>
-                  <select name="firm_id" id="" class="form-control" required>
+                  <input list="firm_id" name="firm_id" type="text" class="form-control" placeholder="輸入體驗商名稱" required>
+                  <datalist id="firm_id">
                     <?php foreach($rows_firm as $firm):?>
                     <option value="<?= $firm["id"] ?>">
                       <?= $firm["firm_name"] ?>
                     </option>
                     <?php endforeach; ?>
-                  </select>
+                  </datalist>
+                  
+                  
               </div>
               <div class="mb-2">
                   <label for="">課程分類：</label>
@@ -89,11 +92,11 @@
                   <input type="number" class="form-control" name="price" required>
               </div>
               <div class="mb-2">
-                  <label for="">課程相關圖片：</label>
+                  <label for="">課程相關圖片：(限jpg, jepg, png, svg檔)</label>
                   <input type="file" class="form-control" name="image_file" required>
               </div>
               <div class="mb-2">
-                  <label for="">課程詳細說明檔：</label>
+                  <label for="">課程詳細說明檔：(限txt, word檔)</label>
                   <input type="file" class="form-control" name="file" required>
               </div>
               <div class="mb-2">

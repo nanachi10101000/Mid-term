@@ -50,8 +50,7 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
                     <table class="table areaInfoTable infoTable">
                         <thead>
                             <tr>
-                                <th></th>
-                                <th></th>
+                                <th colspan="2">地區詳細資料</th>
                             </thead>
                         </tr>
                         <tbody>

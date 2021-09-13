@@ -1,20 +1,28 @@
 <?php
+require_once ("PDO-Connect_order.php");
+$sql="SELECT * FROM order.order_id where valid=1 ";
+$stmt=$order_db_host->prepare($sql);
+$stmt->execute();
+$rows=$stmt->fetchAll(PDO::FETCH_ASSOC);
+$dataCount=$stmt->rowCount();
+//print_r($rows);
+//
 require_once ("css.php");
-require_once ("js.php");
-require_once ("./partials/nav-bar/sidebar.php")
+require_once("CMStemplateAcss.php");
+require_once("../partials/nav-bar/sidebar.php")
 ?>
 
 <!doctype html>
 <html lang="en">
 <head>
-    <title>CMS-template-A</title>
+    <title>orderlist</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
 <div class="page_box">
             <div class="title display-6 text-start fw-bold">
-                廠商管理
+                訂單管理
             </div>
 
             <div class="sorting d-flex justify-content-between">
@@ -22,12 +30,13 @@ require_once ("./partials/nav-bar/sidebar.php")
                 <div>
                     <div id="dropdown" class="dropdown">
                         <button id="dropdown_list" class="dropdown_list btn dropdown-toggle fw-bolder h4" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            依公司編號排序
+                            依訂單編號排序
                         </button>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdown_list">
-                            <li><a id="dropdown-item" class="dropdown-item active" href="#">依公司編號排序</a></li>
-                            <li><a id="dropdown-item" class="dropdown-item" href="#">依公司名稱排序</a></li>
-                            <li><a id="dropdown-item" class="dropdown-item" href="#">依聯絡人排序</a></li>
+                            <li><a id="dropdown-item" class="dropdown-item active" href="#">依訂單編號排序</a></li>
+<!--                            <li><a id="dropdown-item" class="dropdown-item" href="#">依訂單編號排序</a></li>-->
+                            <li><a id="dropdown-item" class="dropdown-item" href="#">依訂單名稱排序</a></li>
+                            <li><a id="dropdown-item" class="dropdown-item" href="#">依創立日期排序</a></li>
                             <!--<li><hr class="dropdown-divider"></li>-->
                         </ul>
 
@@ -41,6 +50,7 @@ require_once ("./partials/nav-bar/sidebar.php")
                             <li><a class="dropdown-item" href="#">降冪排列</a></li>
                             <!--                        <li><hr class="dropdown-divider"></li>-->
                         </ul>
+                        <a class="dropdown_list btn fw-bolder h4" href="orderinsert.php">新增訂單</a>
                     </div>
                 </div>
 
@@ -59,24 +69,28 @@ require_once ("./partials/nav-bar/sidebar.php")
             <table class="table">
                 <thead class="table_head fs-6 fw-bold">
                 <tr class="fs-6 fw-bold">
-                    <th>#</th>
-                    <th>公司名稱</th>
-                    <th>聯絡人</th>
-                    <th>連絡電話</th>
-                    <th></th>
-                    <th></th>
+
+                    <th>序號</th>
+                    <th>訂單編號</th>
+                    <th>會員編號</th>
+                    <th>課程數量</th>
+                    <th>詳細資訊</th>
+                    <th>編輯訂單</th>
+                    <th>刪除訂單</th>
                 </tr>
                 </thead>
                 <tbody class="fs-6">
-
+                <?php foreach ($rows as $value){ ?>
                 <tr>
                     <td>1</td>
-                    <td>英屬維京群島商玩得瘋股份有限公司台灣分公司</td>
-                    <td>林奇毅</td>
-                    <td>(02)2911-1234 #123</td>
-                    <td><button id="" class="btn btn-info text-white mx-2">更多資訊</button></td>
-                    <td><button id="delete" class="btn btn-danger text-white mx-2">刪除</button></td>
+                    <td><?=$value["id"]?></td>
+                    <td><?=$value["client_id"]?></td>
+                    <td>3</td>
+                    <td><a class="btn btn-info text-white mx-2" href="order.php?id=<?=$value["id"]?>">閱覽</a></td>
+                    <td><a class="btn btn-info text-white mx-2" href="orderEdit.php?id=<?=$value["id"]?>">編輯</a></td>
+                    <td><a class="btn btn-danger text-white mx-2" href="orderDelete.php?id=<?=$value["id"]?>">刪除</a></td>
                 </tr>
+                <?php } ?>
                 </tbody>
             </table>
         </div>

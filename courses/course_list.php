@@ -3,6 +3,7 @@ require_once "../DB-Connect/PDO-Connect_firm.php";
 require_once "../DB-Connect/PDO-Connect_courses.php";
 
 
+
 // 拿到所有category資料
 $sql_category = "SELECT * FROM courses.category WHERE valid = 1";
 $stmt_category = $courses_db_host->prepare($sql_category);
@@ -29,7 +30,7 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body>
     <div class="modal fade" id="courseInfo" tabindex="-1" aria-labelledby="courseInfo" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog big-modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">課程資料</h5>
@@ -39,8 +40,7 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                     <table class="table courseInfoTable infoTable">
                         <thead>
                             <tr>
-                                <th>當前課程資料</th>
-                                <th></th>
+                                <th colspan="2">當前課程資料</th>
                             </tr> 
                         </thead>
                         <tbody>
@@ -67,6 +67,10 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
                             <tr>
                                 <td class="label">課程規範: </td>
                                 <td><span id="course_caution"></span></td>
+                            </tr>
+                            <tr class="position-relative">
+                                <td class="label">課程圖片: </td>
+                                <td><div id="course_image_con"></div></td>
                             </tr>
                         </tbody>
                     </table>
@@ -698,14 +702,26 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
             formData.append("id", id);
             axios.post("../API/getCourseInfo.php", formData)  // 丟入/API/user.php抓當前id的資料
                 .then(function (response) {
-                //console.log(response.data.data);
+                console.log(response);
+                let data = response.data.data_course;
+                let imageName = response.data.data_course_image.image_name;
                     if(response.data.status === 1) {
-                        $("#course-name").text(response.data.data_course.course_name);
-                        $("#firm_name").text(response.data.data_course.firm_name);
-                        $("#course_category").text(response.data.data_course.category_name);
-                        $("#course_area").text(response.data.data_course.area_name);
-                        $("#course_price").text(response.data.data_course.price);
-                        $("#course_caution").text(response.data.data_course.caution);
+                        $("#course-name").text(data.course_name);
+                        $("#firm_name").text(data.firm_name);
+                        $("#course_category").text(data.category_name);
+                        $("#course_area").text(data.area_name);
+                        $("#course_price").text(data.price);
+                        $("#course_caution").text(data.caution);
+
+
+                        // 課程圖片
+                        let imageCode = `
+                        <div class="course_image">
+                            <img src="../image_files/${imageName}" alt="課程圖片">
+                        </div>
+                        `
+                        $("#course_image_con").empty();
+                        $("#course_image_con").append(imageCode);
                     } else {
                         alert(response.data.message)
                     }

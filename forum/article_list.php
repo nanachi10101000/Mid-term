@@ -65,15 +65,14 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">文章詳細資料</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">文章資料</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <table class="table articleInfoTable infoTable">
                         <thead>
                             <tr>
-                                <th></th>
-                                <th></th>
+                                <th colspan="2">文章詳細資料</th>
                             </tr> 
                         </thead>
                         <tbody>
@@ -782,6 +781,10 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
         //console.log(id);
         let comment_client_id = $("#comment_client_id").val();
         let article_comment = $("#article_comment").val();
+        if (article_comment.length > 20) {
+            alert("字數不可超過二十")
+            return;
+        }
         //console.log(comment_client_id, article_comment);
         let formData = new FormData();
             formData.append("comment_client_id", comment_client_id);

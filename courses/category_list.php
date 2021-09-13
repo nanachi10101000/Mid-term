@@ -49,8 +49,7 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
                 <div class="modal-body">
                     <table class="table categoryInfoTable infoTable">
                         <thead>
-                            <th>類別詳細資料</th>
-                            <th></th>
+                            <th colspan="2">類別詳細資料</th>
                         </thead>
                         <tbody>
                             <tr>
