@@ -19,7 +19,9 @@ $rows_course=$stmt_course->fetchAll(PDO::FETCH_ASSOC);
 require_once ("css.php");
 require_once ("js.php");
 require_once("CMStemplateAcss.php");
-require_once("../partials/nav-bar/sidebar.php")
+require_once("../partials/nav-bar/sidebar.php");
+require_once("../partials/nav-bar/sidebarCSS.php");
+
 ?>
 
 <!doctype html>
@@ -104,6 +106,11 @@ require_once("../partials/nav-bar/sidebar.php")
                 .catch(function (error) {
                 console.log(error);
                 });
-      })
+    })
+
+    // sidebar 樣式控制
+    $(".order").attr("aria-expanded",true);
+    $(".order-a2").addClass("active");
+    $("#order-collapse").removeClass("collapse");
 </script>
 </html>

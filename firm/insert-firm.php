@@ -100,15 +100,15 @@ $rows = $stmt_firm->fetchAll(PDO::FETCH_ASSOC);
 <script>
     //控制sidebar
 
-    $(".a1").click(function () {
+    $(".f-a1").click(function () {
         window.location.href="firm-list.php";
     })
-    $(".a2").click(function () {
+    $(".f-a2").click(function () {
         window.location.href="insert-firm.php";
     })
 
     $(".firm").attr("aria-expanded",true);
-    $(".a2").addClass("active");
+    $(".f-a2").addClass("active");
     $("#firm-collapse1").removeClass("collapse");
     // $(".firm").parent().parent().addClass("show");
     // $(".sa li").siblings().removeClass("active");

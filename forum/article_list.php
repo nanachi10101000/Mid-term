@@ -837,6 +837,11 @@ $rows_client_info = $stmt_client_info->fetchAll(PDO::FETCH_ASSOC);
                     console.log(error);
                 });
     })
+
+    // sidebar 樣式控制
+    $(".forum").attr("aria-expanded",true);
+    $(".forum-a1").addClass("active");
+    $("#forum-collapse").removeClass("collapse");
 </script>
 </body>
 </html>

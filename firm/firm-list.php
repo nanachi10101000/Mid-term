@@ -457,17 +457,16 @@ if($page_end>$per_total){  //最後頁的最後筆數=總筆數
 <script>
     //控制sidebar
 
-    $(".a1").click(function () {
+    $(".f-a1").click(function () {
         window.location.href="firm-list.php";
     })
-    $(".a2").click(function () {
+    $(".f-a2").click(function () {
         window.location.href="insert-firm.php";
     })
 
     $(".firm").attr("aria-expanded",true);
-    $(".a1").addClass("active");
+    $(".f-a1").addClass("active");
     $("#firm-collapse1").removeClass("collapse");
-    console.log("123");
     // $(".firm").parent().parent().addClass("show");
     // $(".sa li").siblings().removeClass("active");
     // $(".firm").addClass("active");

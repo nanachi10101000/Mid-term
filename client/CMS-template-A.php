@@ -325,7 +325,7 @@ require_once ("../partials/nav-bar/sidebar.php");
     $("#simplePagination").on("click", function () {
     let list = "";
     page=$(".active .current").text();
-    console.log(page);
+    //console.log(page);
     let item_start=(page-1)*$("#list_number").val()+1;
     let item_end=page*$("#list_number").val();
     $("#target").empty();
@@ -397,6 +397,9 @@ require_once ("../partials/nav-bar/sidebar.php");
             cssStyle: 'light-theme'
         });
     })
+    $(".client").attr("aria-expanded",true);
+    $(".client-a1").addClass("active");
+    $("#client-collapse").removeClass("collapse");
 </script>  
 </div>
 </body>

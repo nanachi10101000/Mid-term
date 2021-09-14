@@ -517,6 +517,11 @@ require_once "../DB-Connect/PDO-Connect_courses.php";
     })
     
 
+    // sidebar 樣式控制
+    $(".course").attr("aria-expanded",true);
+    $(".course-a4").addClass("active");
+    $("#course-collapse").removeClass("collapse");
+
 
 </script>
 </body>

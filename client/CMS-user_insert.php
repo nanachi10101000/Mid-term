@@ -164,5 +164,8 @@ function base64ToHex(str) {
   }
   return result;
 }
+$(".client").attr("aria-expanded",true);
+$(".client-a2").addClass("active");
+$("#client-collapse").removeClass("collapse");
 </script>
 </html>

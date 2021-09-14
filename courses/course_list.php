@@ -863,6 +863,10 @@ $rows_area = $stmt_area->fetchAll(PDO::FETCH_ASSOC);
     })
     
 
+    // sidebar 樣式控制
+    $(".course").attr("aria-expanded",true);
+    $(".course-a1").addClass("active");
+    $("#course-collapse").removeClass("collapse");
     
 </script>
 </body>

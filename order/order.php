@@ -30,6 +30,8 @@ $dataCount_order=$stmt_order->rowCount();
 require_once ("css.php");
 require_once("CMStemplateAcss.php");
 require_once("../partials/nav-bar/sidebar.php");
+require_once("../partials/nav-bar/sidebarCSS.php");
+
 ?>
 
 <!doctype html>
@@ -140,28 +142,10 @@ require_once("../partials/nav-bar/sidebar.php");
     </script>
 
     <script>
-        // $("#add").click(function(){
-        //     let name=$("#name").val(), email=$("#email").val(), phone=$("#phone").val()
-        //     if(name=="" || email=="" || phone==""){
-        //         alert("資料未填完整");
-        //         return;
-        //     }
-
-            // console.log(name)
-        //     let newRow=`<tr>
-        //                 <td>${name}</td>
-        //                 <td>${email}</td>
-        //                 <td>${phone}</td>
-        //                 <td><button class="btn btn-danger btn-delete">delete</td>
-        //             </tr>`;
-        //     $("#target").prepend(newRow);
-        //     $("#name, #email, #phone").val("");
-        // })
-        //
-        // $("#target").on("click", ".btn-delete", function(){
-        //     // console.log("click")
-        //     $(this).closest("tr").remove();
-        // })
+        // sidebar 樣式控制
+        $(".order").attr("aria-expanded",true);
+        $(".order-a1").addClass("active");
+        $("#order-collapse").removeClass("collapse");
     </script>
 </div>
 </body>

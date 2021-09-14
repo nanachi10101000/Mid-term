@@ -110,5 +110,11 @@
           </form>
       </div>
     </div>
+    <script>
+    // sidebar 樣式控制
+    $(".course").attr("aria-expanded",true);
+    $(".course-a2").addClass("active");
+    $("#course-collapse").removeClass("collapse");
+    </script>
   </body>
 </html>
