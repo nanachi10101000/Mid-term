@@ -1,15 +1,35 @@
 <?php
-require_once ("../DB-Connect/PDO-Connect_order.php");
-$sql="SELECT * FROM order.order_id where valid=1 ";
-$stmt=$order_db_host->prepare($sql);
-$stmt->execute();
-$rows=$stmt->fetchAll(PDO::FETCH_ASSOC);
-$dataCount=$stmt->rowCount();
+require_once ("PDO-Connect_order.php");
+//$sql_order_id="SELECT * FROM order.order_id where valid=1 ";
+//$stmt_order_id=$order_db_host->prepare($sql_order_id);
+//$stmt_order_id->execute();
+//$rows_order_id=$stmt_order_id->fetchAll(PDO::FETCH_ASSOC);
+//$dataCount_order_id=$stmt_order_id->rowCount();
+//$sql_order_id_detail="SELECT * FROM order.order_id_detail where valid=1 ";
+//$stmt_order_id_detail=$order_db_host->prepare($sql_order_id_detail);
+//$stmt_order_id_detail->execute();
+//$rows_order_id_detail=$stmt_order_id_detail->fetchAll(PDO::FETCH_ASSOC);
+//$dataCount_order_id_detail=$stmt_order_id_detail->rowCount();
 //print_r($rows);
 //
+
+$order_id = $_GET["id"];
+
+$sql_order="SELECT order_id.*, order_id_detail.* 
+            FROM order.order_id, order.order_id_detail
+            WHERE order.order_id.id = order.order_id_detail.order_id
+            AND order.order_id.id = ?
+            AND order_id.valid = ?";
+$stmt_order=$order_db_host->prepare($sql_order);
+$stmt_order->execute([$order_id, 1]);
+$rows_order=$stmt_order->fetchAll(PDO::FETCH_ASSOC);
+$dataCount_order=$stmt_order->rowCount();
+
+//var_dump($rows_order);
+
 require_once ("css.php");
 require_once("CMStemplateAcss.php");
-require_once("../partials/nav-bar/sidebar.php")
+require_once("../partials/nav-bar/sidebar.php");
 ?>
 
 <!doctype html>
@@ -22,7 +42,7 @@ require_once("../partials/nav-bar/sidebar.php")
 <body>
 <div class="page_box">
             <div class="title display-6 text-start fw-bold">
-                訂單管理
+                詳細訂單資訊
             </div>
 
             <div class="sorting d-flex justify-content-between">
@@ -50,7 +70,7 @@ require_once("../partials/nav-bar/sidebar.php")
                             <li><a class="dropdown-item" href="#">降冪排列</a></li>
                             <!--                        <li><hr class="dropdown-divider"></li>-->
                         </ul>
-                        <a class="dropdown_list btn fw-bolder h4" href="orderinsert.php">新增訂單</a>
+                        <a class="dropdown_list btn fw-bolder h4" href="orderlist.php">回到訂單列表</a>
                     </div>
                 </div>
 
@@ -69,26 +89,27 @@ require_once("../partials/nav-bar/sidebar.php")
             <table class="table">
                 <thead class="table_head fs-6 fw-bold">
                 <tr class="fs-6 fw-bold">
-
+<!--序號 訂單編號 課程編號 課程名稱  梯次 人數 費用 會員編號 會員名稱-->
                     <th>序號</th>
                     <th>訂單編號</th>
                     <th>會員編號</th>
-                    <th>課程數量</th>
-                    <th>詳細資訊</th>
-                    <th>編輯訂單</th>
-                    <th>刪除訂單</th>
+                    <th>課程名稱</th>
+                    <th>梯次</th>
+                    <th>人數</th>
                 </tr>
                 </thead>
                 <tbody class="fs-6">
-                <?php foreach ($rows as $value){ ?>
+                <?php foreach ($rows_order as $value){ ?>
                 <tr>
+                    <!--序號 訂單編號 課程編號 課程名稱  梯次 人數 費用 會員編號 會員名稱-->
                     <td>1</td>
-                    <td><?=$value["id"]?></td>
+                    <td><?=$value["order_id"]?></td>
                     <td><?=$value["client_id"]?></td>
-                    <td>1</td>
-                    <td><a class="btn btn-info text-white mx-2" href="order.php?id=<?=$value["id"]?>">閱覽</a></td>
-                    <td><a class="btn btn-info text-white mx-2" href="orderEdit.php?id=<?=$value["id"]?>">編輯</a></td>
-                    <td><a class="btn btn-danger text-white mx-2" href="orderDelete.php?id=<?=$value["id"]?>">刪除</a></td>
+                    <td><?=$value["course_id"]?></td>
+                    <td><?=$value["batch_date"]?></td>
+                    <td><?=$value["number_of_people"]?></td>
+
+
                 </tr>
                 <?php } ?>
                 </tbody>

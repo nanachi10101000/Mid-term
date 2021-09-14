@@ -1,5 +1,5 @@
 <?php
-require_once ("../DB-Connect/PDO-Connect_order.php");
+require_once ("PDO-Connect_order.php");
 
 $id = $_GET["id"];
 $valid=1;

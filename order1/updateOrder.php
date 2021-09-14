@@ -1,17 +1,16 @@
 <?php
-require_once ("../DB-Connect/PDO-Connect_order.php");
+require_once ("PDO-Connect_order.php");
+
 
 //if(!isset($_POST["name"])){
 //    echo"請輸入資料";
 //    exit();
 //}
 $order_id=$_POST["order_id"];
-$client_id=$_POST["client_id"];
+//$client_id=$_POST["client_id"];
 $course_id=$_POST["course_id"];
 $batch_date=$_POST["batch_date"];
 $number_of_people=$_POST["number_of_people"];
-$now=date('Y-m-d H:i:s');
-$valid=1;
 
 //$sql="INSERT INTO product (name,content,created_at,valid)
 //VALUES('$name','$content','$now','1')";

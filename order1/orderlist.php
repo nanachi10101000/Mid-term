@@ -8,8 +8,10 @@ $dataCount=$stmt->rowCount();
 //print_r($rows);
 //
 require_once ("css.php");
+require_once ("js.php");
 require_once("CMStemplateAcss.php");
-require_once("../partials/nav-bar/sidebar.php")
+require_once("../partials/nav-bar/sidebar.php");
+require_once("../partials/nav-bar/sidebarCSS.php");
 ?>
 
 <!doctype html>
@@ -34,12 +36,9 @@ require_once("../partials/nav-bar/sidebar.php")
                         </button>
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdown_list">
                             <li><a id="dropdown-item" class="dropdown-item active" href="#">依訂單編號排序</a></li>
-<!--                            <li><a id="dropdown-item" class="dropdown-item" href="#">依訂單編號排序</a></li>-->
                             <li><a id="dropdown-item" class="dropdown-item" href="#">依訂單名稱排序</a></li>
                             <li><a id="dropdown-item" class="dropdown-item" href="#">依創立日期排序</a></li>
-                            <!--<li><hr class="dropdown-divider"></li>-->
                         </ul>
-
 
 
                         <button id="dropdown_list" class="dropdown_list btn dropdown-toggle fw-bolder h4" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -85,7 +84,7 @@ require_once("../partials/nav-bar/sidebar.php")
                     <td>1</td>
                     <td><?=$value["id"]?></td>
                     <td><?=$value["client_id"]?></td>
-                    <td>1</td>
+                    <td>3</td>
                     <td><a class="btn btn-info text-white mx-2" href="order.php?id=<?=$value["id"]?>">閱覽</a></td>
                     <td><a class="btn btn-info text-white mx-2" href="orderEdit.php?id=<?=$value["id"]?>">編輯</a></td>
                     <td><a class="btn btn-danger text-white mx-2" href="orderDelete.php?id=<?=$value["id"]?>">刪除</a></td>

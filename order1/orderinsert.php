@@ -19,7 +19,8 @@ $rows_course=$stmt_course->fetchAll(PDO::FETCH_ASSOC);
 require_once ("css.php");
 require_once ("js.php");
 require_once("CMStemplateAcss.php");
-require_once("../partials/nav-bar/sidebar.php")
+require_once("../partials/nav-bar/sidebar.php");
+require_once("../partials/nav-bar/sidebarCSS.php");
 ?>
 
 <!doctype html>
@@ -87,7 +88,7 @@ require_once("../partials/nav-bar/sidebar.php")
             axios.post("../API_order/getBatchInfo.php", formData)  
                 .then(function (response) {
                 let data = response.data;
-                console.log(response);
+                console.log(data.data_batch);
                 // return;
                 let batchCode = "";
                     if(data.status === 1) {

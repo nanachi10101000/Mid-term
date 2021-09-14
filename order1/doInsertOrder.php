@@ -1,5 +1,5 @@
 <?php
-require_once ("../DB-Connect/PDO-Connect_order.php");
+require_once ("PDO-Connect_order.php");
 
 //if(!isset($_POST["name"])){
 //    echo"請輸入資料";
